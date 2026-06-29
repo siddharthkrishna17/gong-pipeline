@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gong Pipeline Review — June 29, 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,Inter,sans-serif;background:#ECEEF3;color:#1a1a2e;min-height:100vh}
+.header{height:64px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,.05)}
+.logo{font-size:22px;font-weight:800;color:#6D28D9;letter-spacing:-.5px}
+.logo span{color:#1a1a2e}
+.htitle{font-size:13px;color:#6b7280;font-weight:500}
+.hright{margin-left:auto;display:flex;gap:8px}
+.fb{border:none;padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer;background:#f3f4f6;color:#6b7280;border-radius:20px;transition:all .2s}
+.fb.on{background:#6D28D9;color:#fff;box-shadow:0 4px 14px rgba(109,40,217,.3)}
+.fb:hover:not(.on){background:#e5e7eb}
+.main{max-width:1300px;margin:0 auto;padding:28px 24px}
+.card{background:#fff;border-radius:20px;border:1px solid #e8eaee;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.10)}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.scard{padding:22px 26px}
+.stat-row .scard:first-child{background:linear-gradient(140deg,#16102A 0%,#2D1B69 55%,#4C1D95 100%);border-color:transparent}
+.stat-row .scard:first-child .sval{color:#fff}
+.stat-row .scard:first-child .slbl{color:rgba(255,255,255,.55)}
+.sval{font-size:34px;font-weight:900;color:#1a1a2e;line-height:1}
+.slbl{font-size:11px;color:#9ca3af;font-weight:600;margin-top:8px;text-transform:uppercase;letter-spacing:.6px}
+.section{margin-bottom:28px}
+.shead{font-size:15px;font-weight:700;color:#1a1a2e;margin-bottom:14px}
+.ae-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.ae-card{padding:18px 20px}
+.ae-name{font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:12px}
+.ae-stat{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:5px}
+.ae-stat .k{color:#9ca3af;font-weight:500}
+.ae-stat .v{font-weight:700;color:#1a1a2e}
+.ae-bar{height:4px;background:#f3f4f6;border-radius:2px;margin-top:10px;overflow:hidden}
+.ae-fill{height:4px;border-radius:2px;background:#6D28D9}
+.act-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.act-card{padding:18px 20px;border-left:4px solid #EF4444}
+.act-card.warn{border-left-color:#F97316}
+.act-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#9ca3af;margin-bottom:8px}
+.act-deal{font-size:15px;font-weight:700;color:#1a1a2e;margin-bottom:3px}
+.act-meta{font-size:12px;color:#6b7280;margin-bottom:10px}
+.act-arr{font-size:26px;font-weight:900;color:#1a1a2e;display:inline-block}
+.act-badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:8px;vertical-align:middle}
+.badge-c{background:#FEE2E2;color:#DC2626}
+.badge-w{background:#FFEDD5;color:#C2410C}
+.badge-wa{background:#FEF3C7;color:#B45309}
+.badge-h{background:#DCFCE7;color:#16A34A}
+.act-reason{font-size:12px;color:#6b7280;margin-top:8px;line-height:1.5}
+.act-score{font-size:11px;color:#9ca3af;margin-top:6px;font-weight:600}
+.tcard{padding:0;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;padding:13px 16px;text-align:left;border-bottom:2px solid #f3f4f6;background:#fafafa}
+td{padding:11px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#1a1a2e}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafbfc}
+.tdeal{font-weight:600}
+.tarr{font-weight:700}
+.tscore{font-weight:800;font-size:14px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
+.dot-c{background:#EF4444}
+.dot-w{background:#F97316}
+.dot-wa{background:#EAB308}
+.dot-h{background:#22C55E}
+#ae-view{display:none}
+.ae-filter{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.af{border:1px solid #e5e7eb;padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:#6b7280;border-radius:20px;transition:all .2s}
+.af.on{background:#6D28D9;color:#fff;border-color:#6D28D9;box-shadow:0 4px 14px rgba(109,40,217,.25)}
+.af:hover:not(.on){background:#f9fafb}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px}
+.dc{background:#fff;border-radius:20px;border:1px solid #e8eaee;box-shadow:0 2px 12px rgba(0,0,0,.06);overflow:hidden}
+.dc-head{padding:16px 18px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;gap:10px}
+.dc-deal{font-size:14px;font-weight:700;color:#1a1a2e;flex:1}
+.dc-score{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+.score-c{background:#FEE2E2;color:#DC2626}
+.score-w{background:#FFEDD5;color:#C2410C}
+.score-wa{background:#FEF3C7;color:#B45309}
+.dc-body{padding:14px 18px}
+.dc-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;gap:8px}
+.dc-row .dk{color:#9ca3af;flex-shrink:0}
+.dc-row .dv{font-weight:600;color:#1a1a2e;text-align:right}
+.dc-flag{font-size:12px;color:#6b7280;background:#f9fafb;border-radius:10px;padding:9px 12px;margin:10px 0;line-height:1.5;border-left:3px solid #e5e7eb}
+.dc-etitle{font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;margin-top:14px}
+.dc-esubj{font-size:12px;font-weight:700;color:#6D28D9;margin-bottom:6px}
+.dc-ebody{font-size:12px;color:#374151;line-height:1.65}
+.dc-copy{margin-top:12px;border:none;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;background:#6D28D9;color:#fff;border-radius:12px;transition:background .2s}
+.dc-copy:hover{background:#5b21b6}
+.dc-copy.copied{background:#22C55E}
+.no-deals{text-align:center;padding:60px 20px;color:#9ca3af;font-size:14px;grid-column:1/-1}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">gong<span>.</span></div>
+  <div class="htitle">Weekly Pipeline Review &mdash; June 29, 2026</div>
+  <div class="hright">
+    <button class="fb on" id="bmgr" onclick="sv('manager')">Manager View</button>
+    <button class="fb" id="bae" onclick="sv('ae')">AE View</button>
+  </div>
+</div>
+
+<div id="manager-view" class="main">
+
+  <div class="stat-row">
+    <div class="card scard">
+      <div class="sval">30</div>
+      <div class="slbl">Active Deals</div>
+    </div>
+    <div class="card scard">
+      <div class="sval" style="color:#EF4444">19</div>
+      <div class="slbl">Deals Flagged</div>
+    </div>
+    <div class="card scard">
+      <div class="sval" style="color:#F97316">$2.09M</div>
+      <div class="slbl">ARR at Risk</div>
+    </div>
+    <div class="card scard">
+      <div class="sval">74</div>
+      <div class="slbl">Avg Health Score</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="shead">AE Leaderboard</div>
+    <div class="ae-row">
+      <div class="card ae-card">
+        <div class="ae-name">Priya Nair</div>
+        <div class="ae-stat"><span class="k">Deals</span><span class="v">7</span></div>
+        <div class="ae-stat"><span class="k">Flagged</span><span class="v" style="color:#F97316">3</span></div>
+        <div class="ae-stat"><span class="k">ARR at Risk</span><span class="v">$300K</span></div>
+        <div class="ae-stat"><span class="k">Avg Score</span><span class="v" style="color:#22C55E">89</span></div>
+        <div class="ae-bar"><div class="ae-fill" style="width:89%"></div></div>
+      </div>
+      <div class="card ae-card">
+        <div class="ae-name">Sarah Chen</div>
+        <div class="ae-stat"><span class="k">Deals</span><span class="v">8</span></div>
+        <div class="ae-stat"><span class="k">Flagged</span><span class="v" style="color:#F97316">5</span></div>
+        <div class="ae-stat"><span class="k">ARR at Risk</span><span class="v">$415K</span></div>
+        <div class="ae-stat"><span class="k">Avg Score</span><span class="v" style="color:#EAB308">73</span></div>
+        <div class="ae-bar"><div class="ae-fill" style="width:73%"></div></div>
+      </div>
+      <div class="card ae-card">
+        <div class="ae-name">Marcus Webb</div>
+        <div class="ae-stat"><span class="k">Deals</span><span class="v">8</span></div>
+        <div class="ae-stat"><span class="k">Flagged</span><span class="v" style="color:#F97316">5</span></div>
+        <div class="ae-stat"><span class="k">ARR at Risk</span><span class="v">$875K</span></div>
+        <div class="ae-stat"><span class="k">Avg Score</span><span class="v" style="color:#EAB308">70</span></div>
+        <div class="ae-bar"><div class="ae-fill" style="width:70%"></div></div>
+      </div>
+      <div class="card ae-card">
+        <div class="ae-name">James O'Brien</div>
+        <div class="ae-stat"><span class="k">Deals</span><span class="v">7</span></div>
+        <div class="ae-stat"><span class="k">Flagged</span><span class="v" style="color:#EF4444">6</span></div>
+        <div class="ae-stat"><span class="k">ARR at Risk</span><span class="v">$500K</span></div>
+        <div class="ae-stat"><span class="k">Avg Score</span><span class="v" style="color:#F97316">63</span></div>
+        <div class="ae-bar"><div class="ae-fill" style="width:63%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="shead">Act Today</div>
+    <div class="act-row">
+      <div class="card act-card">
+        <div class="act-label">Highest Risk</div>
+        <div class="act-deal">Buy n Large</div>
+        <div class="act-meta">Marcus Webb &middot; Prospecting</div>
+        <div class="act-arr">$220K</div><span class="act-badge badge-c">Critical</span>
+        <div class="act-reason">35 days dark &mdash; inbound VP lead with 500-rep team, never booked a meeting despite 3 follow-up attempts</div>
+        <div class="act-score">Score: 31</div>
+      </div>
+      <div class="card act-card">
+        <div class="act-label">Champion Lost</div>
+        <div class="act-deal">Umbrella Corp</div>
+        <div class="act-meta">James O'Brien &middot; Demo</div>
+        <div class="act-arr">$200K</div><span class="act-badge badge-c">Critical</span>
+        <div class="act-reason">40 days dark &mdash; champion Lisa Chen left the company, deal has no internal owner and compliance exposure is growing</div>
+        <div class="act-score">Score: 38</div>
+      </div>
+      <div class="card act-card warn">
+        <div class="act-label">Hard Deadline</div>
+        <div class="act-deal">Hooli Enterprise</div>
+        <div class="act-meta">Sarah Chen &middot; Proposal</div>
+        <div class="act-arr">$180K</div><span class="act-badge badge-w">Warning</span>
+        <div class="act-reason">28 days dark &mdash; vendor contract expires Sept 1, $400K renewal penalty if replacement isn't live in time</div>
+        <div class="act-score">Score: 54</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="shead">All Deals &mdash; Sorted by ARR</div>
+    <div class="card tcard">
+      <table>
+        <thead>
+          <tr>
+            <th>Deal</th>
+            <th>Account</th>
+            <th>AE</th>
+            <th>Stage</th>
+            <th>ARR</th>
+            <th>Last Touch</th>
+            <th>Score</th>
+            <th>Health</th>
+          </tr>
+        </thead>
+        <tbody>
+<tr><td class="tdeal">Cyberdyne Systems</td><td>Cyberdyne Systems</td><td>Marcus Webb</td><td>Proposal</td><td class="tarr">$250K</td><td>11 days ago</td><td class="tscore" style="color:#EAB308">77</td><td><span class="dot dot-wa"></span>Watch</td></tr>
+<tr><td class="tdeal">Buy n Large</td><td>Buy n Large Corp</td><td>Marcus Webb</td><td>Prospecting</td><td class="tarr">$220K</td><td>35 days ago</td><td class="tscore" style="color:#EF4444">31</td><td><span class="dot dot-c"></span>Critical</td></tr>
+<tr><td class="tdeal">Umbrella Corp</td><td>Umbrella Corp</td><td>James O'Brien</td><td>Demo</td><td class="tarr">$200K</td><td>40 days ago</td><td class="tscore" style="color:#EF4444">38</td><td><span class="dot dot-c"></span>Critical</td></tr>
+<tr><td class="tdeal">Hooli Enterprise</td><td>Hooli</td><td>Sarah Chen</td><td>Proposal</td><td class="tarr">$180K</td><td>28 days ago</td><td class="tscore" style="color:#F97316">54</td><td><span class="dot dot-w"></span>Warning</td></tr>
+<tr><td class="tdeal">Weyland-Yutani Corp</td><td>Weyland-Yutani</td><td>Marcus Webb</td><td>Demo</td><td class="tarr">$175K</td><td>20 days ago</td><td class="tscore" style="color:#F97316">53</td><td><span class="dot dot-w"></span>Warning</td></tr>
+<tr><td class="tdeal">Wayne Enterprises</td><td>Wayne Enterprises</td><td>Marcus Webb</td><td>Discovery</td><td class="tarr">$150K</td><td>3 days ago</td><td class="tscore" style="color:#22C55E">91</td><td><span class="dot dot-h"></span>Healthy</td></tr>
+<tr><td class="tdeal">InGen Corporation</td><td>InGen Corporation</td><td>Marcus Webb</td><td>Discovery</td><td class="tarr">$145K</td><td>3 days ago</td><td class="tscore" style="color:#22C55E">91</td><td><span class="dot dot-h"></span>Healthy</td></tr>
+<tr><td class="tdeal">Initech Global Expansion</td><td>Initech</td><td>Sarah Chen</td><td>Proposal</td><td class="tarr">$140K</td><td>2 days ago</td><td class="tscore" style="color:#22C55E">98</td><td><span class="dot dot-h"></span>Healthy</td></tr>
+<tr><td class="tdeal">Nakatomi Corp</td><td>Nakatomi Corp</td><td>Priya Nair</td><td>Negotiation</td><td class="tarr">$130K</td><td>1 day ago</td><td class="tscore" style="color:#22C55E">92</td><td><span class="dot dot-h"></span>Healthy</td></tr>
+<tr><td class="tdeal">Globex Platform Deal</td><td>Globex Inc</td><td>Marcus Webb</td><td>Discovery</td><td class="tarr">$120K</td><td>24 days ago</td><td class="tscore" style="color:#F97316">59</td><td><span class="dot dot-w"></span>Warning</td></tr>
+<tr><td class="tdeal">Omni Consumer Products</td><td>Omni Consumer Products</td><td>Priya Nair</td><td>Demo</td><td class="tarr">$115K</td><td>8 days ago</td><td class="tscore" style="color:#EAB308">91</td><td><span class="dot dot-wa"></span>Watch</td></tr>
+<tr><td class="tdeal">Prestige Worldwide</td><td>Prestige Worldwide</td><td>Marcus Webb</td><td>Discovery</td><td class="tarr">$110K</td><td>17 days ago</td><td class="tscore" style="color:#F97316">60</td><td><span class="dot dot-w"></span>Warning</td></tr>
+<tr><td class="tdeal">Stark Industries POC</td><td>Stark Industries</td><td>Priya Nair</td><td>Proposal</td><td class="tarr">$95K</td><td>14 days ago</td><td class="tscore" style="color:#F97316">84</td><td><span class="dot dot-w"></span>Warning</td></tr>
+<tr><td class="tdeal">Monsters Inc</td><td>Monsters Inc</td><td>Sarah Chen</td><td>Discovery</td><td class="tarr">$95K</td><td>16 days ago</td><td class="tscore" style="color:#F97316">67</td><td><span class="dot dot-w"></span>Warning</td></tr>
+<tr><td class="tdeal">Massive Dynamic</td><td>Massive Dynamic</td><td>Priya Nair</td><td>Discovery</td><td class="tarr">$90K</td><td>7 days ago</td><td class="tscore" style="color:#EAB308">86</td><td><span class="dot dot-wa"></span>Watch</td></tr>
+<tr><td class="tdeal">Acme Corp Expansion</td><td>Acme Corp</td><td>Sarah Chen</td><td>Proposal</td><td class="tarr">$85K</td><td>1 day ago</td><td class="tscore" style="color:#22C55E">98</td><td><span class="dot dot-h"></span>Healthy</td></tr>
+<tr><td class="tdeal">Wernham Hogg</td><td>Wernham Hogg Ltd</td><td>James O'Brien</td><td>Discovery</td><td class="tarr">$85K</td><td>10 days ago</td><td class="tscore" style="color:#EAB308">79</td><td><span class="dot dot-wa"></span>Watch</td></tr>
+<tr><td class="tdeal">Frobozz Magic</td><td>Frobozz Magic Co</td><td>James O'Brien</td><td>Proposal</td><td class="tarr">$80K</td><td>22 days ago</td><td class="tscore" style="color:#F97316">71</td><td><span class="dot dot-w"></span>Warning</td></tr>
+<tr><td class="tdeal">Pied Piper Scale-Up</td><td>Pied Piper</td><td>Priya Nair</td><td>Demo</td><td class="tarr">$75K</td><td>5 days ago</td><td class="tscore" style="color:#22C55E">83</td><td><span class="dot dot-h"></span>Healthy</td></tr>
+<tr><td class="tdeal">Dharma Initiative</td><td>Dharma Initiative</td><td>Sarah Chen</td><td>Proposal</td><td class="tarr">$70K</td><td>26 days ago</td><td class="tscore" style="color:#F97316">57</td><td><span class="dot dot-w"></span>Warning</td></tr>
+<tr><td class="tdeal">Sterling Archer LLC</td><td>Sterling Archer LLC</td><td>James O'Brien</td><td>Demo</td><td class="tarr">$65K</td><td>9 days ago</td><td class="tscore" style="color:#EAB308">88</td><td><span class="dot dot-wa"></span>Watch</td></tr>
+<tr><td class="tdeal">Initech Renewal Plus</td><td>Initech</td><td>Sarah Chen</td><td>Negotiation</td><td class="tarr">$60K</td><td>2 days ago</td><td class="tscore" style="color:#22C55E">98</td><td><span class="dot dot-h"></span>Healthy</td></tr>
+<tr><td class="tdeal">Rekall Inc</td><td>Rekall Inc</td><td>Priya Nair</td><td>Proposal</td><td class="tarr">$60K</td><td>1 day ago</td><td class="tscore" style="color:#22C55E">96</td><td><span class="dot dot-h"></span>Healthy</td></tr>
+<tr><td class="tdeal">Dunder Mifflin Ops</td><td>Dunder Mifflin</td><td>Marcus Webb</td><td>Negotiation</td><td class="tarr">$55K</td><td>Today</td><td class="tscore" style="color:#22C55E">96</td><td><span class="dot dot-h"></span>Healthy</td></tr>
+<tr><td class="tdeal">Soylent Corp Expansion</td><td>Soylent Corp</td><td>James O'Brien</td><td>Negotiation</td><td class="tarr">$55K</td><td>1 day ago</td><td class="tscore" style="color:#22C55E">87</td><td><span class="dot dot-h"></span>Healthy</td></tr>
+<tr><td class="tdeal">Oscorp Upsell</td><td>Oscorp</td><td>Sarah Chen</td><td>Proposal</td><td class="tarr">$45K</td><td>19 days ago</td><td class="tscore" style="color:#F97316">72</td><td><span class="dot dot-w"></span>Warning</td></tr>
+<tr><td class="tdeal">Soylent Corp</td><td>Soylent Corp</td><td>James O'Brien</td><td>Demo</td><td class="tarr">$40K</td><td>21 days ago</td><td class="tscore" style="color:#F97316">43</td><td><span class="dot dot-w"></span>Warning</td></tr>
+<tr><td class="tdeal">Initech New Division</td><td>Initech</td><td>Priya Nair</td><td>Discovery</td><td class="tarr">$35K</td><td>4 days ago</td><td class="tscore" style="color:#22C55E">89</td><td><span class="dot dot-h"></span>Healthy</td></tr>
+<tr><td class="tdeal">Vandelay Industries</td><td>Vandelay Industries</td><td>James O'Brien</td><td>Prospecting</td><td class="tarr">$30K</td><td>60 days ago</td><td class="tscore" style="color:#EF4444">38</td><td><span class="dot dot-c"></span>Critical</td></tr>
+<tr><td class="tdeal">Bluth Company</td><td>Bluth Company</td><td>Sarah Chen</td><td>Prospecting</td><td class="tarr">$25K</td><td>45 days ago</td><td class="tscore" style="color:#EF4444">41</td><td><span class="dot dot-c"></span>Critical</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="ae-view" class="main">
+  <div class="ae-filter">
+    <button class="af on" data-ae="all" onclick="fa(this)">All AEs (19)</button>
+    <button class="af" data-ae="Sarah Chen" onclick="fa(this)">Sarah Chen (5)</button>
+    <button class="af" data-ae="Marcus Webb" onclick="fa(this)">Marcus Webb (5)</button>
+    <button class="af" data-ae="James O'Brien" onclick="fa(this)">James O'Brien (6)</button>
+    <button class="af" data-ae="Priya Nair" onclick="fa(this)">Priya Nair (3)</button>
+  </div>
+  <div class="cgrid" id="cgrid"></div>
+</div>
+
+<script>
+var DEALS = [
+  {id:"D027",deal:"Buy n Large",ae:"Marcus Webb",stage:"Prospecting",arr:"$220K",days:35,score:31,health:"c",
+   champ:"Shelby Forthright (VP Sales)",eb:"Shelby Forthright",budget:"No",
+   pain:"500-rep sales team with zero call intelligence platform",
+   nextstep:"No meeting booked — 3 follow-ups since May with no response",
+   flag:"35 days dark. Large inbound VP lead who expressed interest but has never booked a meeting despite multiple attempts.",
+   esubj:"the 500 rep team",
+   ebody:"Shelby - you mentioned 500 reps with no call intelligence when we first connected in May.\n\nThat's roughly $2M+ in blind pipeline every quarter. Three outreach attempts and radio silence makes me think either the timing's off or I've got the wrong angle.\n\nWorth a quick call to either move this forward or close it out?"},
+
+  {id:"D004",deal:"Umbrella Corp",ae:"James O'Brien",stage:"Demo",arr:"$200K",days:40,score:38,health:"c",
+   champ:"No champion — Lisa Chen departed",eb:"Albert Wesker",budget:"No",
+   pain:"2,000 call records reconciled manually per month — compliance audit failed Q1",
+   nextstep:"Need to identify new internal champion — Lisa Chen departed",
+   flag:"40 days dark. Previous champion left the company. Deal has no internal owner and compliance exposure continues to grow.",
+   esubj:"who owns this now",
+   ebody:"Albert - Lisa Chen was driving the Gong evaluation before she left, and with 2,000 call records reconciled manually each month, your compliance exposure isn't going away.\n\nI don't want to restart with the wrong person. Is there someone on your team who's picked this up, or does it make sense to loop you in directly?"},
+
+  {id:"D008",deal:"Vandelay Industries",ae:"James O'Brien",stage:"Prospecting",arr:"$30K",days:60,score:38,health:"c",
+   champ:"Art Vandelay",eb:"George Costanza",budget:"No",
+   pain:"Import/export division missing quota by 31% with no call coaching in place",
+   nextstep:"Two follow-up attempts after April intro — no response",
+   flag:"60 days dark. One intro call in April. George (budget holder) has gone completely silent.",
+   esubj:"still worth a call",
+   ebody:"Art - we spoke in April and you mentioned the import/export division is missing quota by 31% with no call coaching in place.\n\nThat gap compounds every week reps go without feedback. George has been quiet on my end — is this still something you're looking to solve before Q3?"},
+
+  {id:"D016",deal:"Bluth Company",ae:"Sarah Chen",stage:"Prospecting",arr:"$25K",days:45,score:41,health:"c",
+   champ:"Michael Bluth",eb:"Lucille Bluth",budget:"No",
+   pain:"8-rep team running pipeline in spreadsheets with zero call visibility",
+   nextstep:"Two emails in May — zero response from Michael or Lucille",
+   flag:"45 days dark. Zero meetings booked. Lucille (true budget holder) has never been engaged.",
+   esubj:"one more try",
+   ebody:"Michael - two notes in May with no response, so I'll make this the last one.\n\nEight reps managing pipeline in spreadsheets with zero call visibility is a real risk heading into Q3. If the timing is genuinely off, no hard feelings — just let me know and I'll close this out."},
+
+  {id:"D011",deal:"Hooli Enterprise",ae:"Sarah Chen",stage:"Proposal",arr:"$180K",days:28,score:54,health:"w",
+   champ:"Big Head Nelson",eb:"Gavin Belson",budget:"Yes",
+   pain:"Vendor contract expiring Sept 1 — $400K renewal penalty if replacement isn't live",
+   nextstep:"Waiting for Big Head to re-engage since June 1",
+   flag:"28 days dark. Hard deadline approaching with no champion engagement. 10 weeks to implement or pay $400K to a vendor they've decided to leave.",
+   esubj:"the september deadline",
+   ebody:"Big Head - your current vendor contract expires September 1st.\n\nThat's 10 weeks to evaluate, decide, and implement a replacement. Missing that window means a $400K renewal on a tool you've already decided to move away from.\n\nStill on track to get Gavin's sign-off before the deadline?"},
+
+  {id:"D023",deal:"Weyland-Yutani Corp",ae:"Marcus Webb",stage:"Demo",arr:"$175K",days:20,score:53,health:"w",
+   champ:"Ellen Ripley",eb:"Carter Burke",budget:"No",
+   pain:"200 distributed field reps missing 60% of deal context — no recordings accessible remotely",
+   nextstep:"Security compliance docs 2 weeks overdue to prospect",
+   flag:"20 days dark. Security documentation still not sent. Carter (economic buyer) has not been engaged since the demo.",
+   esubj:"i owe you docs",
+   ebody:"Ellen - the security compliance documentation from our demo is two weeks overdue, and that's on me.\n\n200 reps missing 60% of deal context in the field is a solvable problem, but only if we keep moving. Can I get you the docs this week and schedule a follow-up with Carter?"},
+
+  {id:"D002",deal:"Globex Platform Deal",ae:"Marcus Webb",stage:"Discovery",arr:"$120K",days:24,score:59,health:"w",
+   champ:"Hank Scorpio",eb:"Bill Donaldson",budget:"No",
+   pain:"Sales cycle lengthening 35% YoY — reps have no insight into why deals stall post-demo",
+   nextstep:"Second discovery call never scheduled after strong first call",
+   flag:"24 days dark. Strong first call with no follow-up. Second discovery call never booked.",
+   esubj:"why deals are stalling",
+   ebody:"Hank - you said sales cycle length is up 35% year over year and reps have no insight into why deals stall post-demo.\n\nI haven't been able to get a second call on the calendar and I'm wondering if I'm hitting the same wall your reps are. What's the right next step here?"},
+
+  {id:"D018",deal:"Prestige Worldwide",ae:"Marcus Webb",stage:"Discovery",arr:"$110K",days:17,score:60,health:"w",
+   champ:"No champion identified",eb:"Will Ferrell",budget:"No",
+   pain:"40% of warm marketing leads going cold — no visibility into which conversations convert",
+   nextstep:"No next step defined — genuine discovery still needed",
+   flag:"17 days dark. No champion identified. Real problem not yet surfaced after intro call.",
+   esubj:"what is the real problem",
+   ebody:"Will - our first call left me with more questions than answers, which tells me we probably didn't get to the real problem.\n\nYou've got pipeline coming in from marketing but can't track which conversations convert — that's not a data problem, it's a process one. Worth 30 minutes to dig into what's actually happening?"},
+
+  {id:"D005",deal:"Stark Industries POC",ae:"Priya Nair",stage:"Proposal",arr:"$95K",days:14,score:84,health:"w",
+   champ:"Pepper Potts",eb:"Tony Stark",budget:"Yes",
+   pain:"4 system outages in 90 days across 150 engineers — legacy CRM causing critical incidents",
+   nextstep:"POC results review meeting not yet scheduled with Tony and Pepper",
+   flag:"14 days dark. POC running but review meeting not scheduled. Tony (EB) not driving internal urgency.",
+   esubj:"the poc results",
+   ebody:"Pepper - the POC has been running and Tony needs results before the review meeting.\n\nFour system outages in 90 days across 150 engineers is a hard number to ignore. I haven't been able to get the review scheduled — are you the right person to push this across the line, or should I be talking to Tony directly?"},
+
+  {id:"D026",deal:"Monsters Inc",ae:"Sarah Chen",stage:"Discovery",arr:"$95K",days:16,score:67,health:"w",
+   champ:"James Sullivan",eb:"Henry Waternoose",budget:"No",
+   pain:"Scream energy quota down 18% YoY — ops team cannot identify root cause without conversation intelligence",
+   nextstep:"Discovery call 2 not scheduled — Sully said he'd send availability but hasn't",
+   flag:"16 days dark. Discovery stalled despite CTO personally initiating outreach.",
+   esubj:"the quota problem",
+   ebody:"Sully - scream energy quota down 18% YoY and Henry personally reached out to fix it.\n\nYou said you'd send availability for discovery call two. That was two weeks ago. I'm not trying to push — I just want to know if this is still a priority or if the timing's changed."},
+
+  {id:"D029",deal:"Frobozz Magic",ae:"James O'Brien",stage:"Proposal",arr:"$80K",days:22,score:71,health:"w",
+   champ:"Sandra Flathead",eb:"Gerald Flathead",budget:"Yes",
+   pain:"New hire ramp at 90 days vs 45-day benchmark — $180K per rep in lost productivity",
+   nextstep:"Proposal review never confirmed — two follow-ups sent since June 7",
+   flag:"22 days dark. Sandra liked the proposal but Gerald sign-off is pending with complete silence since.",
+   esubj:"the proposal",
+   ebody:"Sandra - you said the proposal looked good and Gerald needed to review it. That was three weeks ago.\n\nNew hire ramp at 90 days vs the 45-day benchmark is costing you $180K per rep in lost productivity. Two follow-ups with no response makes me think something changed. What happened?"},
+
+  {id:"D020",deal:"Dharma Initiative",ae:"Sarah Chen",stage:"Proposal",arr:"$70K",days:26,score:57,health:"w",
+   champ:"Hugo Reyes",eb:"Benjamin Linus",budget:"Yes",
+   pain:"Pipeline accuracy below 60% — two consecutive board misses driving urgent fix mandate",
+   nextstep:"Proposal sent June 3 — Hugo has not confirmed receipt or next step",
+   flag:"26 days dark. Budget approved by Benjamin but champion has gone silent after proposal sent.",
+   esubj:"the forecast miss",
+   ebody:"Hugo - Benjamin approved the budget after two consecutive board quarters with forecast accuracy below 60%.\n\nThe proposal's been in your inbox since June 3rd with no reply. Is this still moving, or did something change on your end? Happy to adjust if needed."},
+
+  {id:"D007",deal:"Oscorp Upsell",ae:"Sarah Chen",stage:"Proposal",arr:"$45K",days:19,score:72,health:"w",
+   champ:"Norman Osborn",eb:"Norman Osborn",budget:"Yes",
+   pain:"Compliance exposure from unrecorded client calls — legal flagged this risk in May",
+   nextstep:"Waiting on Norman to confirm exec review date for July 15 board meeting",
+   flag:"19 days dark. Board meeting July 15 is approaching with exec review date still unconfirmed.",
+   esubj:"the board meeting",
+   ebody:"Norman - you've got a board meeting July 15th and compliance exposure from unrecorded client calls was flagged by legal in May.\n\nWalking in with a plan to address that is different from walking in without one. Do you need the exec review confirmed before then, or is the board date the driver?"},
+
+  {id:"D013",deal:"Soylent Corp",ae:"James O'Brien",stage:"Demo",arr:"$40K",days:21,score:43,health:"w",
+   champ:"William R. Fredericks",eb:"Martha Phillips",budget:"No",
+   pain:"Sales team losing critical deal context between meetings — no call recordings before Q3 audit",
+   nextstep:"No next step defined post-demo — William said he needed Martha to weigh in",
+   flag:"21 days dark. Demo completed with zero next steps logged. Martha (EB) has never been engaged.",
+   esubj:"after the demo",
+   ebody:"William - we showed you exactly how call recordings would plug the context gaps before your Q3 audit.\n\nYou said Martha needed to weigh in. It's been three weeks with no response. Q3 audit doesn't wait. Is Martha the right person for me to reach out to directly?"},
+
+  {id:"D014",deal:"Cyberdyne Systems",ae:"Marcus Webb",stage:"Proposal",arr:"$250K",days:11,score:77,health:"wa",
+   champ:"Miles Dyson",eb:"Peter Silberman, CFO — not yet engaged",budget:"No",
+   pain:"3hrs/day per rep on manual CRM updates — $1.2M annually in lost selling time",
+   nextstep:"Proposal sent June 18 — awaiting response, no CFO looped in",
+   flag:"11 days dark. Largest deal in pipeline. CFO Peter has never been engaged after proposal sent.",
+   esubj:"the proposal",
+   ebody:"Miles - the proposal has been with you since June 18th with no response.\n\nThree hours per rep per day on manual CRM updates is $1.2M annually in lost selling time. Peter hasn't been looped in yet and that's the piece that concerns me. Is the proposal still being reviewed or did something shift?"},
+
+  {id:"D028",deal:"Omni Consumer Products",ae:"Priya Nair",stage:"Demo",arr:"$115K",days:8,score:91,health:"wa",
+   champ:"Ellen Murphy",eb:"Richard Jones, CFO",budget:"Yes",
+   pain:"4.2 calls/day vs 7.1 industry benchmark — $2.3M in annual lost revenue",
+   nextstep:"ROI model for CFO — 5 days overdue",
+   flag:"8 days dark. ROI model that CFO specifically requested during demo is 5 days overdue.",
+   esubj:"the roi model",
+   ebody:"Ellen - the ROI model Richard asked for during the demo is five days overdue, and that's on me.\n\n4.2 calls per day vs the 7.1 industry benchmark is $2.3M in lost revenue annually — that's the number that matters to Richard. Can I send the model this week and get 30 minutes on the calendar?"},
+
+  {id:"D012",deal:"Massive Dynamic",ae:"Priya Nair",stage:"Discovery",arr:"$90K",days:7,score:86,health:"wa",
+   champ:"Nina Sharp",eb:"Walter Bishop",budget:"No",
+   pain:"Data silos adding 3 weeks to each experiment cycle — R&D velocity significantly impacted",
+   nextstep:"Technical team intro scheduled — no pre-call alignment done yet",
+   flag:"7 days dark. Technical intro with Walter's team is imminent but no pre-call prep completed.",
+   esubj:"before the tech call",
+   ebody:"Nina - the technical team intro is coming up and I want to make sure we're aligned before you walk Walter into that room.\n\nThree weeks per experiment cycle because of data silos is the real cost here. What objections do you expect from the IT team so I can prepare the right answers?"},
+
+  {id:"D022",deal:"Wernham Hogg",ae:"James O'Brien",stage:"Discovery",arr:"$85K",days:10,score:79,health:"wa",
+   champ:"Tim Canterbury",eb:"Neil Godwin",budget:"No",
+   pain:"Sales managers spending 8hrs/week on manual pipeline reports — losing all coaching capacity",
+   nextstep:"Technical eval call never scheduled — Tim agreed but hasn't sent a date",
+   flag:"10 days dark. Momentum stalled after strong first two calls. Technical eval still not booked.",
+   esubj:"the pipeline reports",
+   ebody:"Tim - you said sales managers spending 8 hours a week on manual pipeline reports was the core problem.\n\nYou agreed to set a date for the technical evaluation and it hasn't happened. Is Neil's alignment the blocker, or has something else come up? I can schedule directly with his team if that helps."},
+
+  {id:"D017",deal:"Sterling Archer LLC",ae:"James O'Brien",stage:"Demo",arr:"$65K",days:9,score:88,health:"wa",
+   champ:"Malory Archer",eb:"Malory Archer",budget:"Yes",
+   pain:"Field team missing 30% of deal context between meetings — reps taking notes on paper",
+   nextstep:"Three demo questions sent via email June 20 — no response",
+   flag:"9 days dark. Decision maker attended the demo and asked strong questions. Three answers sent, none acknowledged.",
+   esubj:"your three questions",
+   ebody:"Malory - you asked three strong questions in the demo about mobile access and field rep adoption.\n\nI sent answers on June 20th. No response. Your field team is missing 30% of deal context between meetings right now, and that gap widens every week. Are the answers sufficient or do you need something else from me?"}
+];
+
+var activeAE = "all";
+
+function esc(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function buildCard(d) {
+  var sc = d.health === "c" ? "score-c" : (d.health === "w" ? "score-w" : "score-wa");
+  var bc = d.health === "c" ? "badge-c" : (d.health === "w" ? "badge-w" : "badge-wa");
+  var bt = d.health === "c" ? "Critical" : (d.health === "w" ? "Warning" : "Watch");
+  var bodyData = d.ebody.replace(/\n/g,"&#10;").replace(/"/g,"&quot;");
+  var subjData = d.esubj.replace(/"/g,"&quot;");
+  var h = "";
+  h += '<div class="dc" data-ae="' + esc(d.ae) + '">';
+  h += '<div class="dc-head"><div class="dc-deal">' + esc(d.deal) + ' <span class="act-badge ' + bc + '">' + bt + '</span></div>';
+  h += '<div class="dc-score ' + sc + '">' + d.score + '</div></div>';
+  h += '<div class="dc-body">';
+  h += '<div class="dc-row"><span class="dk">AE</span><span class="dv">' + esc(d.ae) + '</span></div>';
+  h += '<div class="dc-row"><span class="dk">Stage</span><span class="dv">' + esc(d.stage) + " &middot; " + esc(d.arr) + '</span></div>';
+  h += '<div class="dc-row"><span class="dk">Champion</span><span class="dv">' + esc(d.champ) + '</span></div>';
+  h += '<div class="dc-row"><span class="dk">Econ Buyer</span><span class="dv">' + esc(d.eb) + '</span></div>';
+  h += '<div class="dc-row"><span class="dk">Budget</span><span class="dv">' + esc(d.budget) + '</span></div>';
+  h += '<div class="dc-row"><span class="dk">Last Touch</span><span class="dv">' + d.days + ' days ago</span></div>';
+  h += '<div class="dc-row"><span class="dk">Pain</span><span class="dv">' + esc(d.pain) + '</span></div>';
+  h += '<div class="dc-flag">' + esc(d.flag) + '</div>';
+  h += '<div class="dc-etitle">Suggested Re-engagement Email</div>';
+  h += '<div class="dc-esubj">Subject: ' + esc(d.esubj) + '</div>';
+  h += '<div class="dc-ebody">' + esc(d.ebody).replace(/\n/g,"<br>") + '</div>';
+  h += '<button class="dc-copy" data-subj="' + subjData + '" data-body="' + bodyData + '" onclick="cp(this)">Copy Email</button>';
+  h += '</div></div>';
+  return h;
+}
+
+function renderAEView() {
+  var grid = document.getElementById("cgrid");
+  var html = "";
+  var n = 0;
+  for (var i = 0; i < DEALS.length; i++) {
+    var d = DEALS[i];
+    if (activeAE === "all" || d.ae === activeAE) { html += buildCard(d); n++; }
+  }
+  if (n === 0) html = '<div class="no-deals">No flagged deals for this AE.</div>';
+  grid.innerHTML = html;
+}
+
+function sv(v) {
+  document.getElementById("bmgr").className = v === "manager" ? "fb on" : "fb";
+  document.getElementById("bae").className  = v === "ae"      ? "fb on" : "fb";
+  document.getElementById("manager-view").style.display = v === "manager" ? "block" : "none";
+  document.getElementById("ae-view").style.display      = v === "ae"      ? "block" : "none";
+  if (v === "ae") renderAEView();
+}
+
+function fa(el) {
+  activeAE = el.getAttribute("data-ae");
+  var btns = document.querySelectorAll(".af");
+  for (var i = 0; i < btns.length; i++) btns[i].className = "af";
+  el.className = "af on";
+  renderAEView();
+}
+
+function cp(btn) {
+  var subj = btn.getAttribute("data-subj");
+  var body = btn.getAttribute("data-body").replace(/&#10;/g,"\n").replace(/&quot;/g,'"');
+  var text = "Subject: " + subj + "\n\n" + body;
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = "Copied!"; btn.className = "dc-copy copied";
+    setTimeout(function() { btn.textContent = "Copy Email"; btn.className = "dc-copy"; }, 2000);
+  }).catch(function() {
+    var ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+    btn.textContent = "Copied!"; btn.className = "dc-copy copied";
+    setTimeout(function() { btn.textContent = "Copy Email"; btn.className = "dc-copy"; }, 2000);
+  });
+}
+</script>
+</body>
+</html>

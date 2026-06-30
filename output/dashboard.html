@@ -185,6 +185,69 @@ body.dark td:last-child::after{color:#9F7AEA}
 .modal-copy{margin-top:14px;border:none;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;background:#6D28D9;color:#fff;border-radius:14px;transition:background .2s;display:block;width:100%}
 .modal-copy:hover{background:#5b21b6}
 .modal-copy.copied{background:#22C55E}
+
+/* LIVE BADGE */
+.live-badge{font-size:11px;font-weight:700;color:#22C55E;display:flex;align-items:center;gap:5px;margin-left:2px}
+.live-dot{width:7px;height:7px;background:#22C55E;border-radius:50%;animation:pulse-live 2s infinite}
+@keyframes pulse-live{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}60%{box-shadow:0 0 0 5px rgba(34,197,94,0)}}
+body.dark .live-badge{color:#4ADE80}
+/* ACT TODAY PULSE */
+@keyframes act-glow{0%,100%{box-shadow:0 2px 12px rgba(0,0,0,.06)}50%{box-shadow:0 0 0 6px rgba(239,68,68,.18),0 8px 24px rgba(0,0,0,.1)}}
+.act-card.pulse-init{animation:act-glow 1.2s ease .6s 2}
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:#1a1a2e;color:#fff;padding:11px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:800;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;display:flex;align-items:center;gap:8px}
+.toast.show{opacity:1;transform:translateY(0)}
+body.dark .toast{background:#F0F0F5;color:#1A1A24}
+/* STAGE STEPPER */
+.stage-stepper{display:flex;align-items:center;margin:12px 0 18px}
+.step-lbl{font-size:9px;font-weight:700;color:#d1d5db;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.step-lbl.done{color:#9ca3af}.step-lbl.active{color:#6D28D9;font-size:10px}
+.step-line{flex:1;height:2px;background:#f3f4f6;margin:0 5px}
+.step-line.done{background:#6D28D9}
+body.dark .step-lbl{color:#3A3A50}
+body.dark .step-lbl.done{color:#555570}
+body.dark .step-lbl.active{color:#9F7AEA}
+body.dark .step-line{background:#2A2A38}
+body.dark .step-line.done{background:#7C3AED}
+/* SCORE RING */
+.score-ring-wrap{text-align:center;margin:12px 0 4px}
+.score-ring-sub{font-size:12px;color:#9ca3af;font-weight:500;margin-top:4px}
+body.dark .score-ring-sub{color:#8888A8}
+/* HEAT TINT */
+.heat-red{background:rgba(239,68,68,.07)!important}
+.heat-orange{background:rgba(249,115,22,.06)!important}
+.heat-yellow{background:rgba(234,179,8,.05)!important}
+tr:hover .heat-red,tr:hover .heat-orange,tr:hover .heat-yellow{background:#fafbfc!important}
+body.dark tr:hover .heat-red,body.dark tr:hover .heat-orange,body.dark tr:hover .heat-yellow{background:#20202e!important}
+/* SEARCH HIGHLIGHT */
+mark{background:#FDE68A;color:inherit;border-radius:2px;padding:0 1px;font-style:normal}
+body.dark mark{background:#78350F;color:#FDE68A}
+/* CARD FLIP (horizontal slide) */
+.flip-wrap{border-radius:18px;overflow:hidden}
+.flip-inner{display:flex;transition:transform .42s cubic-bezier(.4,0,.2,1)}
+.flip-front,.flip-back{flex:0 0 100%;min-width:100%}
+.flip-wrap.flipped .flip-inner{transform:translateX(-100%)}
+.flip-back{background:#fff;padding:14px 18px;box-sizing:border-box}
+body.dark .flip-back{background:#1A1A24}
+.flip-hint{font-size:11px;color:#6D28D9;font-weight:600;cursor:pointer;text-align:right;padding:10px 0 0;user-select:none}
+.flip-hint:hover{text-decoration:underline}
+body.dark .flip-hint{color:#9F7AEA}
+/* KEYBOARD SHORTCUT OVERLAY */
+.kbd-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:700;align-items:center;justify-content:center}
+.kbd-overlay.open{display:flex}
+.kbd-panel{background:#fff;border-radius:20px;padding:26px 30px;min-width:310px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+body.dark .kbd-panel{background:#1A1A24}
+.kbd-title{font-size:15px;font-weight:800;color:#1a1a2e;margin-bottom:16px}
+body.dark .kbd-title{color:#F0F0F5}
+.kbd-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f3f4f6;font-size:13px}
+body.dark .kbd-row{border-color:#2A2A38}
+.kbd-row:last-child{border-bottom:none}
+.kbd-desc{color:#6b7280}
+body.dark .kbd-desc{color:#8888A8}
+.kbd-key{background:#f3f4f6;color:#1a1a2e;font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;font-family:monospace}
+body.dark .kbd-key{background:#2A2A38;color:#F0F0F5}
+.kbd-close-btn{margin-top:16px;width:100%;border:none;background:#6D28D9;color:#fff;padding:10px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer}
+.kbd-close-btn:hover{background:#5b21b6}
 </style>
 </head>
 <body>
@@ -192,6 +255,7 @@ body.dark td:last-child::after{color:#9F7AEA}
 <div class="header">
   <div class="logo">gong<span>.</span></div>
   <div class="htitle">Weekly Pipeline Review &mdash; June 30, 2026</div>
+  <div class="live-badge"><span class="live-dot"></span>Live</div>
   <div class="hright">
     <button class="fb on" id="bmgr" onclick="sv('manager')">Manager View</button>
     <button class="fb" id="bae" onclick="sv('ae')">AE View</button>
@@ -274,7 +338,7 @@ body.dark td:last-child::after{color:#9F7AEA}
   <div class="section">
     <div class="shead">Act Today</div>
     <div class="act-row">
-      <div class="card act-card" onclick="openModal('D027')">
+      <div class="card act-card pulse-init" onclick="openModal('D027')">
         <div class="act-label">Highest Risk</div>
         <div class="act-deal">Buy n Large</div>
         <div class="act-meta">Marcus Webb &middot; Prospecting</div>
@@ -282,7 +346,7 @@ body.dark td:last-child::after{color:#9F7AEA}
         <div class="act-reason">35 days dark &mdash; inbound VP lead with 500-rep team, never booked a meeting despite 3 follow-up attempts</div>
         <div class="act-score">Score: 31</div>
       </div>
-      <div class="card act-card" onclick="openModal('D004')">
+      <div class="card act-card pulse-init" onclick="openModal('D004')">
         <div class="act-label">Champion Lost</div>
         <div class="act-deal">Umbrella Corp</div>
         <div class="act-meta">James O'Brien &middot; Demo</div>
@@ -290,7 +354,7 @@ body.dark td:last-child::after{color:#9F7AEA}
         <div class="act-reason">40 days dark &mdash; champion Lisa Chen left the company, deal has no internal owner and compliance exposure is growing</div>
         <div class="act-score">Score: 38</div>
       </div>
-      <div class="card act-card warn" onclick="openModal('D011')">
+      <div class="card act-card warn pulse-init" onclick="openModal('D011')">
         <div class="act-label">Hard Deadline</div>
         <div class="act-deal">Hooli Enterprise</div>
         <div class="act-meta">Sarah Chen &middot; Proposal</div>
@@ -324,6 +388,21 @@ body.dark td:last-child::after{color:#9F7AEA}
     <button class="af" data-ae="Priya Nair" onclick="fa(this)">Priya Nair (3)</button>
   </div>
   <div class="cgrid" id="cgrid"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="kbd-overlay" id="kbd-overlay" onclick="if(event.target===this)closeKbd()">
+  <div class="kbd-panel">
+    <div class="kbd-title">Keyboard Shortcuts</div>
+    <div class="kbd-row"><span class="kbd-desc">Open deal</span><span class="kbd-key">click row</span></div>
+    <div class="kbd-row"><span class="kbd-desc">Next deal</span><span class="kbd-key">&rarr;</span></div>
+    <div class="kbd-row"><span class="kbd-desc">Previous deal</span><span class="kbd-key">&larr;</span></div>
+    <div class="kbd-row"><span class="kbd-desc">Close modal</span><span class="kbd-key">Esc</span></div>
+    <div class="kbd-row"><span class="kbd-desc">Toggle dark mode</span><span class="kbd-key">D</span></div>
+    <div class="kbd-row"><span class="kbd-desc">This help</span><span class="kbd-key">?</span></div>
+    <button class="kbd-close-btn" onclick="closeKbd()">Close</button>
+  </div>
 </div>
 
 <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
@@ -558,6 +637,24 @@ var AE_COLORS = {'Priya Nair':'#7C3AED','Sarah Chen':'#2563EB','Marcus Webb':'#0
 function initials(n){return n.split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase();}
 
 var sortState = {col:'arr', dir:'desc'};
+var currentList = [];
+var modalOpenId = null;
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.innerHTML='<span>&#10003;</span> '+msg;
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2200);
+}
+function openKbd(){document.getElementById('kbd-overlay').classList.add('open');}
+function closeKbd(){document.getElementById('kbd-overlay').classList.remove('open');}
+function flipCard(el){var w=el.closest('.flip-wrap');if(w)w.classList.toggle('flipped');}
+function highlight(text,q){
+  var s=esc(text);
+  if(!q)return s;
+  var re=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+  return s.replace(re,'<mark>$1</mark>');
+}
 var searchQuery = '';
 var activeAE = 'all';
 
@@ -624,16 +721,19 @@ function renderHead(){
 
 function renderTable(){
   var list=sortedFiltered();
+  currentList=list;
+  var q=searchQuery.toLowerCase();
   var h='';
   for(var i=0;i<list.length;i++){
     var d=list[i];
+    var heat=d.days>=30?'heat-red':d.days>=14?'heat-orange':d.days>=7?'heat-yellow':'';
     h+='<tr onclick="openModal(\''+d.id+'\')">';
-    h+='<td class="tdeal">'+esc(d.deal)+'</td>';
-    h+='<td>'+esc(d.account)+'</td>';
-    h+='<td>'+esc(d.ae)+'</td>';
+    h+='<td class="tdeal">'+highlight(d.deal,q)+'</td>';
+    h+='<td>'+highlight(d.account,q)+'</td>';
+    h+='<td>'+highlight(d.ae,q)+'</td>';
     h+='<td>'+esc(d.stage)+'</td>';
     h+='<td class="tarr">'+esc(d.arr)+'</td>';
-    h+='<td>'+daysLabel(d.days)+'</td>';
+    h+='<td class="'+heat+'">'+daysLabel(d.days)+'</td>';
     h+='<td class="tscore" style="color:'+hcolor(d.health)+'">'+d.score+'</td>';
     h+='<td><span class="dot '+hdot(d.health)+'"></span>'+hlabel(d.health)+'</td>';
     h+='</tr>';
@@ -679,11 +779,25 @@ function openModal(id){
   var d=null;
   for(var i=0;i<DEALS.length;i++){if(DEALS[i].id===id){d=DEALS[i];break;}}
   if(!d)return;
+  modalOpenId=id;
   var ss=getSubScores(d);
   var badge='<span class="act-badge '+hbadge(d.health)+'">'+hlabel(d.health)+'</span>';
+  // stage stepper
+  var stages=['Prospecting','Discovery','Demo','Proposal','Negotiation'];
+  var si=stages.indexOf(d.stage);
+  var stepper='<div class="stage-stepper">';
+  for(var i=0;i<stages.length;i++){
+    if(i>0)stepper+='<div class="step-line'+(i<=si?' done':'')+'"></div>';
+    stepper+='<div class="step-lbl'+(i<si?' done':i===si?' active':'')+'">'+stages[i]+'</div>';
+  }
+  stepper+='</div>';
+  // score ring values
+  var r=38,circ=2*Math.PI*r,filled=circ*d.score/100,empty=circ-filled;
+  var rc=hcolor(d.health);
   var h='';
   h+='<div class="modal-deal-name">'+esc(d.deal)+'&nbsp;'+badge+'</div>';
-  h+='<div class="modal-ae">'+esc(d.ae)+' &middot; '+esc(d.stage)+' &middot; '+esc(d.arr)+'</div>';
+  h+='<div class="modal-ae">'+esc(d.ae)+' &middot; '+esc(d.arr)+'</div>';
+  h+=stepper;
   h+='<hr class="modal-divider">';
   h+='<div class="modal-section-title">Deal Context</div>';
   h+='<div class="modal-row"><span class="mk">Champion</span><span class="mv">'+esc(d.champ)+'</span></div>';
@@ -699,7 +813,11 @@ function openModal(id){
   h+='<div class="bar-row"><span class="bar-label">MEDDPICC (30%)</span><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(ss.m/30*100)+'%"></div></div><span class="bar-pts">'+ss.m+'/30</span></div>';
   h+='<div class="bar-row"><span class="bar-label">Stage-Close Fit (20%)</span><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(ss.sc/20*100)+'%"></div></div><span class="bar-pts">'+ss.sc+'/20</span></div>';
   h+='<div class="bar-row"><span class="bar-label">Stage Velocity (15%)</span><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(ss.v/15*100)+'%"></div></div><span class="bar-pts">'+ss.v+'/15</span></div>';
-  h+='<div class="bar-total">Total: '+d.score+' / 100</div>';
+  h+='<div class="score-ring-wrap">';
+  h+='<svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="'+r+'" fill="none" stroke="#f3f4f6" stroke-width="8"/>';
+  h+='<circle id="ring-arc" cx="48" cy="48" r="'+r+'" fill="none" stroke="'+rc+'" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 '+circ+'" transform="rotate(-90 48 48)" style="transition:stroke-dasharray .8s ease"/>';
+  h+='<text x="48" y="48" text-anchor="middle" dominant-baseline="central" font-size="20" font-weight="900" fill="'+rc+'">'+d.score+'</text></svg>';
+  h+='<div class="score-ring-sub">Health Score / 100</div></div>';
   if(d.esubj){
     var bd=(d.ebody||'').replace(/\n/g,'&#10;').replace(/"/g,'&quot;');
     var sj=(d.esubj||'').replace(/"/g,'&quot;');
@@ -712,25 +830,35 @@ function openModal(id){
   document.getElementById('modal-content').innerHTML=h;
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow='hidden';
+  setTimeout(function(){var arc=document.getElementById('ring-arc');if(arc)arc.setAttribute('stroke-dasharray',filled+' '+empty);},60);
 }
 
 function closeModal(){
   document.getElementById('modal-overlay').classList.remove('open');
   document.body.style.overflow='';
 }
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){closeModal();closeKbd();return;}
+  if(e.key==='?'){openKbd();return;}
+  if(e.key==='d'||e.key==='D'){toggleDark();return;}
+  if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&modalOpenId){
+    var overlay=document.getElementById('modal-overlay');
+    if(!overlay.classList.contains('open'))return;
+    var ids=currentList.map(function(d){return d.id;});
+    var idx=ids.indexOf(modalOpenId);
+    if(idx===-1)return;
+    var next=e.key==='ArrowRight'?Math.min(idx+1,ids.length-1):Math.max(idx-1,0);
+    if(next!==idx)openModal(currentList[next].id);
+  }
+});
 
 function cpModal(btn){
   var subj=btn.getAttribute('data-subj');
   var body=btn.getAttribute('data-body').replace(/&#10;/g,'\n');
   var text='Subject: '+subj+'\n\n'+body;
-  navigator.clipboard.writeText(text).then(function(){
-    btn.textContent='Copied!';btn.className='modal-copy copied';
-    setTimeout(function(){btn.textContent='Copy Email';btn.className='modal-copy';},2000);
-  }).catch(function(){
-    var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-    btn.textContent='Copied!';btn.className='modal-copy copied';
-    setTimeout(function(){btn.textContent='Copy Email';btn.className='modal-copy';},2000);
+  function done(){showToast('Email copied to clipboard');}
+  navigator.clipboard.writeText(text).then(done).catch(function(){
+    var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);done();
   });
 }
 
@@ -764,9 +892,12 @@ function buildCard(d){
   var sc=d.health==='c'?'score-c':d.health==='w'?'score-w':'score-wa';
   var bd=(d.ebody||'').replace(/\n/g,'&#10;').replace(/"/g,'&quot;');
   var sj=(d.esubj||'').replace(/"/g,'&quot;');
+  var avc=AE_COLORS[d.ae]||'#6D28D9';
   var h='';
   h+='<div class="dc" data-ae="'+esc(d.ae)+'">';
-  var avc=AE_COLORS[d.ae]||'#6D28D9';
+  h+='<div class="flip-wrap"><div class="flip-inner">';
+  // FRONT
+  h+='<div class="flip-front">';
   h+='<div class="dc-head"><div class="dc-avatar" style="background:'+avc+'">'+initials(d.ae)+'</div><div class="dc-deal" style="margin-left:8px">'+esc(d.deal)+' <span class="act-badge '+hbadge(d.health)+'">'+hlabel(d.health)+'</span></div>';
   h+='<div class="dc-score '+sc+'">'+d.score+'</div></div>';
   h+='<div class="dc-body">';
@@ -775,16 +906,22 @@ function buildCard(d){
   h+='<div class="dc-row"><span class="dk">Champion</span><span class="dv">'+esc(d.champ)+'</span></div>';
   h+='<div class="dc-row"><span class="dk">Econ Buyer</span><span class="dv">'+esc(d.eb)+'</span></div>';
   h+='<div class="dc-row"><span class="dk">Budget</span><span class="dv">'+esc(d.budget)+'</span></div>';
-  h+='<div class="dc-row"><span class="dk">Last Touch</span><span class="dv">'+d.days+' days ago</span></div>';
+  h+='<div class="dc-row"><span class="dk">Last Touch</span><span class="dv">'+daysLabel(d.days)+'</span></div>';
   h+='<div class="dc-row"><span class="dk">Pain</span><span class="dv">'+esc(d.pain)+'</span></div>';
-  if(d.flag){
-    h+='<div class="dc-flag">'+esc(d.flag)+'</div>';
-    h+='<div class="dc-etitle">Suggested Re-engagement Email</div>';
+  if(d.flag)h+='<div class="dc-flag">'+esc(d.flag)+'</div>';
+  if(d.esubj)h+='<div class="flip-hint" onclick="flipCard(this)">See email &rarr;</div>';
+  h+='</div></div>';
+  // BACK
+  if(d.esubj){
+    h+='<div class="flip-back">';
+    h+='<div class="flip-hint" onclick="flipCard(this)">&larr; Back to deal</div>';
+    h+='<div class="dc-etitle" style="margin-top:12px">Suggested Re-engagement Email</div>';
     h+='<div class="dc-esubj">Subject: '+esc(d.esubj)+'</div>';
     h+='<div class="dc-ebody">'+esc(d.ebody).replace(/\n/g,'<br>')+'</div>';
     h+='<button class="dc-copy" data-subj="'+sj+'" data-body="'+bd+'" onclick="cpCard(this)">Copy Email</button>';
+    h+='</div>';
   }
-  h+='</div></div>';
+  h+='</div></div></div>';
   return h;
 }
 
@@ -792,13 +929,9 @@ function cpCard(btn){
   var subj=btn.getAttribute('data-subj');
   var body=btn.getAttribute('data-body').replace(/&#10;/g,'\n');
   var text='Subject: '+subj+'\n\n'+body;
-  navigator.clipboard.writeText(text).then(function(){
-    btn.textContent='Copied!';btn.className='dc-copy copied';
-    setTimeout(function(){btn.textContent='Copy Email';btn.className='dc-copy';},2000);
-  }).catch(function(){
-    var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-    btn.textContent='Copied!';btn.className='dc-copy copied';
-    setTimeout(function(){btn.textContent='Copy Email';btn.className='dc-copy';},2000);
+  function done(){showToast('Email copied to clipboard');}
+  navigator.clipboard.writeText(text).then(done).catch(function(){
+    var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);done();
   });
 }
 

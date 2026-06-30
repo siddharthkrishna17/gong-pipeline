@@ -64,7 +64,6 @@ Expected minimum days until close by stage:
 - Proposal: 30+ days
 - Negotiation: 14+ days
 Score reflects how well-aligned the close date is to the current stage.
-A Prospecting deal closing in 2 weeks scores near 0 on this factor.
 
 ### 4. Stage Velocity (15% weight)
 Days stuck in current stage vs. expected average:
@@ -99,39 +98,22 @@ NEVER write:
 Emails are from the AE to the prospect/champion. Written as suggested drafts
 for the sales manager to review and hand to the AE.
 
-## Dashboard Design (output/dashboard.html)
-Single-page HTML/CSS/JS app. Must look like a real SaaS product — not a report.
-
-### Manager View
-- Header: Gong logo + "Weekly Pipeline Review — [date]"
-- Summary bar: total deals, flagged count, total ARR at risk, avg health score
-- AE Leaderboard: each AE's deal count, flagged count, ARR at risk
-- Deal Risk Table: all deals sorted by ARR desc, color-coded by health
-- Top 3 "Act Today" deals highlighted prominently
-
-### AE View
-- Filtered to show only that AE's deals
-- Each flagged deal shown as a card
-- Card expands to show: deal context, health score breakdown, draft email (copyable)
-
-### Design Aesthetic
-- Clean, modern, data-dense but readable
-- Color system: red (#EF4444) = Critical, orange (#F97316) = Warning,
-  yellow (#EAB308) = Watch, green (#22C55E) = Healthy, grey = no action needed
-- Font: system-ui / Inter
-- No external dependencies — fully self-contained HTML file
-
 ## Output Rules
 - All output goes to /output/ — never anywhere else
 - Always overwrite existing files in /output/
 - Dashboard is the primary artifact: output/dashboard.html
 - Structured data: output/flagged_deals.json
 
-## Slack (Optional)
-- Webhook URL in .env as SLACK_WEBHOOK_URL
-- Skip gracefully with a console note if not set
-- Setup deferred — will configure before going live
-- When active: Block Kit format, Critical deals individually, Warning/Watch as rollup
+## Slack (Live)
+- Webhook URL in .env as SLACK_WEBHOOK_URL (never hardcode)
+- Script: `D:\Deal quality and Pipeline hygiene\scripts\send-slack.ps1`
+- Run: `powershell -ExecutionPolicy Bypass -File scripts\send-slack.ps1`
+- Block Kit format with colored attachments:
+  - Critical (#EF4444): 2-column fields per deal (name/stage | ARR/days dark)
+  - Warning (#F97316): line-by-line rollup
+  - Watch (#EAB308): line-by-line rollup
+  - Footer (#6D28D9): link to live dashboard
+- Use ASCII separators only (`-` and `|`) — the middle dot `·` renders as `?` in Slack
 
 ## Hard Rules
 - NEVER overwrite data/deals.csv
@@ -139,150 +121,183 @@ Single-page HTML/CSS/JS app. Must look like a real SaaS product — not a report
 - NEVER say "hope this finds you well" or "circling back" in any email
 - Emails must pass the SPRY test: could this be sent to someone else? If yes, rewrite it
 - Dashboard must work by opening the HTML file directly in a browser — no server needed
+- C: drive is full (0 bytes free) — ALL output lives on D: drive
 
 ---
 
-## Current Build State (as of 2026-06-29)
+## Current Build State (as of 2026-06-30)
 
 ### File Locations
-ALL files now live on D: drive — C: drive was full and has been abandoned.
-**Working directory for all future Claude Code sessions: `D:\Deal quality and Pipeline hygiene\`**
-
-- Source data: `D:\Deal quality and Pipeline hygiene\deals.csv`
-- Enriched data: `D:\Deal quality and Pipeline hygiene\data\deals.json` (30 deals with extended fields)
-- Dashboard: `D:\Deal quality and Pipeline hygiene\output\dashboard.html`
+- Source data: `C:\Users\Aditya PC\Documents\Deal quality and Pipeline hygiene\deals.csv`
+  - Note: CSV is in the ROOT project folder, NOT in a data/ subfolder
+- Enriched data: `D:\Deal quality and Pipeline hygiene\data\deals.json` (20 deals — D001–D020 only)
+- Dashboard: `D:\Deal quality and Pipeline hygiene\output\dashboard.html` (~65K chars)
 - Flagged deals: `D:\Deal quality and Pipeline hygiene\output\flagged_deals.json`
-- Vercel config: `D:\Deal quality and Pipeline hygiene\vercel.json`
+- Slack script: `D:\Deal quality and Pipeline hygiene\scripts\send-slack.ps1`
+- Env file: `D:\Deal quality and Pipeline hygiene\.env` (in .gitignore — never commit)
 
 ### Dataset: 30 Deals
-deals.csv has been expanded from 20 to 30 deals and all blank context fields have been
-filled in with realistic fabricated data. Every deal now has a named champion, economic
-buyer, documented pain point with metrics, decision criteria, and a next step.
+All 30 deals live in the JS `DEALS` array inside dashboard.html.
+deals.json on D: only has D001–D020; D021–D030 are JS-only.
 
 AE distribution: Sarah Chen (8), Marcus Webb (8), James O'Brien (7), Priya Nair (7)
 Total pipeline ARR: $3.08M
-Flagged deals: ~19 (4 Critical, 10 Warning, 5 Watch)
-ARR at risk: ~$2.09M
-Avg health score: 74
+Flagged deals: 19 (4 Critical, 10 Warning, 5 Watch)
+ARR at risk: $2.09M | Avg health score: 74 | Weighted forecast: $1.22M
 
-New deals added: D021–D030 (Initech Global, Wernham Hogg, Weyland-Yutani, Rekall Inc,
+Deals D021–D030: Initech Global, Wernham Hogg, Weyland-Yutani, Rekall Inc,
 Soylent Corp Expansion, Monsters Inc, Buy n Large, Omni Consumer Products,
-Frobozz Magic, InGen Corporation)
+Frobozz Magic, InGen Corporation
 
-### Design Decisions Made
-- Visual style: Donezo-inspired — 20px border-radius on all cards, real drop shadows
-  (0 2px 12px rgba(0,0,0,.06)), hover lift (translateY -2px), more whitespace
-- Background: #ECEEF3 (cooler grey)
-- Featured stat card: first card in .stat-row gets dark Gong purple gradient
-  (linear-gradient 140deg #16102A → #2D1B69 → #4C1D95)
-- AE leaderboard top accent: gradient bars (not solid)
-- Filter buttons: full pill shape (border-radius 20px) with purple glow when active
-- Dashboard layout: top header toggle (Manager/AE view) — NOT a sidebar
-- Gong colors preserved: purple #7C3AED/#2D1B69, health colors unchanged
+Hot streak deals (score >=90, activity <=3 days): Nakatomi Corp, Wayne Enterprises, InGen Corporation
 
-### Critical Technical Fix
-In the view-switching JS function sv(), always use `element.style.display = 'block'`
-NOT `element.style.display = ''` — setting '' removes the inline style and lets the
-CSS `#ae-view{display:none}` rule snap back in, causing the AE view to appear blank.
-
-### Email Approach
-All 19 flagged deal emails have been rewritten with specific context:
-- Champion name used in opener
-- Actual pain metric referenced (e.g. "31% below quota", "8hrs/week manual reporting")
-- Cost of inaction tied to documented pain
-- CTA matches the deal's specific stall point
-- No forbidden phrases used
-
-### Full Rebuild Complete (2026-06-29)
-dashboard.html is the complete v2 product:
-- Static Manager View: summary bar + AE leaderboard + Act Today (3 cards) + 30-row ARR-sorted table
-- JS-driven AE View: 19 flagged deal cards, DEALS[] data array, buildCard() string concat
-  (no nested template literals), data-ae attributes for filter buttons (handles "James O'Brien"
-  apostrophe safely), data-subj/data-body on copy buttons, esc() helper for XSS-safe rendering
-- Clipboard copy with execCommand() fallback for local file:// access
-
-### AE Filter Button Pattern
-Uses data-ae HTML attribute to avoid JS apostrophe escaping:
-  <button class="af" data-ae="James O'Brien" onclick="fa(this)">
-  function fa(el) { activeAE = el.getAttribute("data-ae"); ... }
-
-### Vercel Deployment
-- vercel.json at project root sets outputDirectory:"output" and rewrites / → /dashboard.html
-- Scope: siddharthkrishna17-5772s-projects
-- Live URL: https://gong-pipeline.vercel.app
+### Deployment
 - GitHub: https://github.com/siddharthkrishna17/gong-pipeline
-- To redeploy after updates:
-    cd "D:\Deal quality and Pipeline hygiene"
-    git add . && git commit -m "message" && git push
-    vercel --prod --scope siddharthkrishna17-5772s-projects
+- Vercel: https://gong-pipeline.vercel.app
+- Auto-deploy: GitHub integration is live — `git push` to main triggers Vercel automatically
 - No build step. Vercel serves output/dashboard.html as a static site.
+- vercel.json: outputDirectory:"output", rewrites / → /dashboard.html
+- Scope: siddharthkrishna17-5772s-projects
+
+To deploy: `git add output/dashboard.html && git commit -m "message" && git push`
 
 ---
 
-## V3 Plan (fully confirmed 2026-06-30, NOT YET BUILT)
+## Full Feature Set (as of 2026-06-30)
 
-All decisions confirmed by user. Build as a single full rewrite of dashboard.html.
+### Manager View
+- Header: Gong logo, "Weekly Pipeline Review — June 30 2026", pulsing Live badge,
+  refresh timer ("Updated just now" counts up), Copy Summary button, view toggles, dark mode toggle
+- 5 stat cards (all clickable, all animate count-up on load):
+  1. Active Deals — resets table to all 30, sorts by ARR desc
+  2. Deals Flagged — filters to 19 flagged deals
+  3. ARR at Risk — same filter as Flagged, sorted by ARR desc
+  4. Avg Health Score — shows all deals sorted score asc (worst first)
+  5. Weighted Forecast — opens stage-breakdown modal ($1.22M calculation)
+  Active stat card gets purple glow ring; click same card again to reset
+- AE Leaderboard: 4 cards, each with animated SVG arc ring around avatar
+  (ring color = health of avg score: green/amber/orange), click switches to AE view
+- Pipeline Funnel: horizontal bars per stage, animate from 0% on load, shows deal count + ARR
+- Act Today: top 3 highest-risk deals, pulse glow animation, click opens deal modal
+- Search bar: live search on deal name, AE, account — highlights matches in yellow
+- Deal table: sortable columns, heat tint rows (red/orange/yellow by days dark),
+  "★ Hot" badge on top-scoring active deals, hover shows "Open →" hint, click opens modal
 
-### Confirmed Feature List
+### AE View
+- Filter pills by AE (or All AEs)
+- Deal cards in grid layout with flip animation:
+  - Front: deal context (champion, EB, budget, pain, last touch, flag reason)
+  - Back: suggested re-engagement email + Copy button
+  - "See email →" / "← Back to deal" flip hints
+- Click AE leaderboard card in Manager view → switches to AE view filtered to that rep
 
-1. **Dark mode** — system preference default (`prefers-color-scheme`), sun/moon toggle in header, persisted in localStorage
-2. **Slide-up modal** — click any deal row, Act Today card, or AE leaderboard card → slide-up modal. Close via X or backdrop click.
-3. **Score breakdown bars** — inside modal: 4 horizontal bars (Activity 35%, MEDDPICC 30%, Stage-Close 20%, Velocity 15%) with X/max labels
-4. **Sortable table columns** — click any header to sort asc/desc, arrow indicators shown
-5. **Clickable AE leaderboard cards** — click card → switches to AE view filtered to that rep
-6. **Clickable Act Today cards** — opens slide-up modal for that deal
-7. **Search/filter bar** — live search on manager deal table only (by deal name, AE, account)
-8. **Pipeline forecast stat** — 5th summary card: weighted ARR by stage win probability
-9. **Pipeline funnel chart** — horizontal bars between AE leaderboard and Act Today section
+### Deal Modal (slide-up)
+- Opens from: table row click, Act Today card click, stat card filter
+- Content: deal name + health badge, AE + ARR + Share button, stage stepper,
+  Deal Context (6 fields), flag reason, Coach Tip (context-aware italic advice),
+  Score Breakdown (4 animated bars), animated SVG score ring, Suggested Email + Copy
+- Share button: copies deep-link URL (gong-pipeline.vercel.app/#D014) to clipboard
+- Keyboard navigation: arrow keys to move between deals in current filtered list
+- Close: X button, backdrop click, or Esc key
 
-### Modal Design (confirmed 2026-06-30)
-Clean sections with dividers:
-- Header: deal name, health badge, AE name, ARR
-- Section "DEAL CONTEXT": Champion, Econ Buyer, Budget, Pain, Next Step, flag reason
-- Section "SCORE BREAKDOWN": 4 bars with X/max labels, total score shown
-- Section "SUGGESTED EMAIL": subject (purple), body, Copy Email button
-- Full-width dividers between each section
+### Keyboard Shortcuts
+- `?` — opens shortcut overlay
+- `D` — toggles dark mode
+- `Esc` — closes modal or shortcut overlay
+- `← →` — navigates between deals when modal is open
 
-### Funnel Chart (confirmed 2026-06-30)
-- Position: between AE leaderboard and Act Today
-- Horizontal bars per stage, Gong purple gradient fill
-- Each bar labelled with deal count + ARR total for that stage
+### Dark Mode
+- System preference default (`prefers-color-scheme: dark`)
+- Sun/moon toggle in header, persisted in localStorage
+- Implementation: `body.dark` class, all dark styles scoped to that selector
+- Full contrast dark: bg #0F0F13, cards #1A1A24, borders #2A2A38, text #F0F0F5
 
-### Dark Mode (confirmed 2026-06-30)
-Full contrast dark — NOT soft grey:
-- Background: #0F0F13
-- Card background: #1A1A24
-- Card border: #2A2A38
-- Text primary: #F0F0F5
-- Text muted: #8888A8
-- Purple accent: #6D28D9 (unchanged)
-- Health colors: unchanged
-- Implementation: `body.dark` class toggle, all dark styles scoped to `body.dark`
+### Ambient Background
+- Page background temperature shifts based on avg health score of current filtered view:
+  - Score >=75: cool blue-grey (#ECEEF3 light / #0F0F13 dark)
+  - Score 60–74: warm beige (#F0EDE8 light / #130F0D dark)
+  - Score <60: warm rose (#F5EAEA light / #1A0D0D dark)
+- Updates live when stat card filters are applied (flagged deals avg ~63 → warm shift)
+- 0.7s CSS transition
 
-### Search Scope (confirmed 2026-06-30)
-Manager table only. AE view is unaffected by the search bar.
+### Copy Summary
+Button in header. Generates 3-sentence pipeline summary from live DEALS data:
+- Overall risk level + flagged count + ARR at risk + date
+- Worst AE by flagged deal count and ARR exposure
+- Top priority deal (highest ARR critical deal) with flag reason
+Copies to clipboard, shows toast. Content changes when filters are active.
 
-### Stage Win Probabilities (for forecast stat)
-- Prospecting: 10%
-- Discovery: 20%
-- Demo: 35%
-- Proposal: 55%
-- Negotiation: 80%
+### URL Hash Deep-linking
+- Opening a deal modal sets window.location.hash = dealId (e.g. #D014)
+- Closing clears the hash via history.pushState
+- Loading gong-pipeline.vercel.app/#D014 opens that deal modal automatically
 
-### Data Note for V3
-- `deals.json` on D: only has D001–D020 (20 deals)
-- D021–D030 live only in the JS `DEALS` array inside dashboard.html
-- V3 must have all 30 deals in the JS array so modals work for every table row
-- Healthy deals not currently in DEALS array — add with: id, deal, ae, stage, arr, days, score, health, champ, eb, budget, pain, nextstep, flag (empty string for healthy deals)
+---
 
-### Build Notes
-- Single full rewrite pass (~25–30K tokens)
-- No nested template literals — use string concatenation in buildCard()
-- sv() must use `element.style.display = 'block'` not `''`
-- Modal: slide-up overlay with backdrop, closeable via X or backdrop click
-- No external dependencies — fully self-contained HTML
+## Technical Architecture
 
-### Continuation Prompt
+### Key JS State Variables
+```
+sortState    = {col:'arr', dir:'desc'}   // current table sort
+currentList  = []                         // deals currently shown in table
+modalOpenId  = null                       // ID of open modal deal
+statFilter   = null | 'flagged'          // stat card filter
+activeStat   = null | 'stat-flagged'...  // which stat card is highlighted
+searchQuery  = ''                         // live search string
+activeAE     = 'all'                     // AE view filter
+```
+
+### Key JS Functions
+- `sv(v)` — switch view. MUST use `display='block'` not `display=''`
+- `openModal(id)` — open slide-up modal, set hash, animate ring
+- `closeModal()` — close modal, clear hash, reset modalOpenId
+- `renderTable()` — re-render deal table, update currentList, call updateAmbient
+- `renderFunnel()` — render funnel bars at 0%, animate via setTimeout(60ms)
+- `renderAEView()` — render AE deal cards using buildCard()
+- `buildCard(d)` — build flip card HTML (front + back, no nested template literals)
+- `sortBy(col)` — toggle sort state and re-render
+- `onSearch(q)` — update searchQuery and re-render
+- `sortedFiltered()` — DEALS filtered by statFilter + searchQuery, sorted
+- `clickStat(id)` — handle stat card click: set filter, highlight, scroll to table
+- `highlightStat(id)` — apply/remove .stat-active class on stat cards
+- `openForecastModal()` — open modal with stage-by-stage forecast breakdown
+- `updateAmbient(list)` — set --page-bg/--page-bg-dark CSS vars based on avg score
+- `getCoachTip(d)` — generate context-aware coaching advice for a deal
+- `copySummary()` — generate + copy 3-sentence exec summary to clipboard
+- `shareModal()` — copy deep-link URL for current open modal
+- `toggleDark()` — toggle dark class, persist to localStorage
+- `showToast(msg)` — show bottom-right toast notification
+- `flipCard(el)` — toggle .flipped on .flip-wrap for card email flip
+- `openKbd()` / `closeKbd()` — open/close keyboard shortcut overlay
+- `highlight(text,q)` — wrap search matches in mark tags
+
+### Critical sv() Rule
+ALWAYS use `element.style.display = 'block'` NOT `element.style.display = ''`
+Setting '' removes the inline style, letting CSS `#ae-view{display:none}` snap back → AE view appears blank.
+
+### AE Colors
+Priya Nair #7C3AED, Sarah Chen #2563EB, Marcus Webb #059669, James O'Brien #D97706
+
+### AE Arc Ring Math
+SVG circle r=24, circumference=151. Arc fill = round(151 × score/100).
+Priya 89→134, Sarah 73→110, Marcus 70→106, James 63→95.
+Ring color matches health color. Animated in init() via setTimeout(400ms).
+
+### Ambient Background CSS
+Uses CSS custom properties --page-bg and --page-bg-dark on :root.
+Body: `background: var(--page-bg, #ECEEF3)` with 0.7s transition.
+updateAmbient(list) calculates avg score and sets both properties.
+Called by renderTable() so it updates on every filter/search change.
+
+### Stage Win Probabilities (forecast)
+Prospecting 10%, Discovery 20%, Demo 35%, Proposal 55%, Negotiation 80%
+
+---
+
+## Continuation Prompt
 Paste into a new session to resume:
 
-> Read CLAUDE.md first (C:\Users\Aditya PC\Documents\Deal quality and Pipeline hygiene\CLAUDE.md). Then read D:\Deal quality and Pipeline hygiene\output\dashboard.html in full. C: drive is full — all output goes to D:. Build v3 exactly as specified in the "V3 Plan" section of CLAUDE.md in a single rewrite pass. Output to D:\Deal quality and Pipeline hygiene\output\dashboard.html.
+> Read CLAUDE.md first (`C:\Users\Aditya PC\Documents\Deal quality and Pipeline hygiene\CLAUDE.md`).
+> The dashboard is fully built at `D:\Deal quality and Pipeline hygiene\output\dashboard.html`.
+> C: drive is full — all output goes to D:. GitHub auto-deploys to Vercel on git push to main.
+> Ask me what to build next.

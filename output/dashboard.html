@@ -58,10 +58,12 @@ body.dark .logo span{color:#F0F0F5}
 
 /* STAT ROW */
 .stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px}
-.scard{padding:22px 26px}
+.scard{padding:22px 26px;cursor:pointer}
 .stat-row .scard:first-child{background:linear-gradient(140deg,#16102A 0%,#2D1B69 55%,#4C1D95 100%);border-color:transparent}
 .stat-row .scard:first-child .sval{color:#fff}
 .stat-row .scard:first-child .slbl{color:rgba(255,255,255,.55)}
+.scard.stat-active{box-shadow:0 0 0 3px #6D28D9,0 8px 28px rgba(109,40,217,.22)!important;transform:translateY(-2px)}
+.stat-row .scard:first-child.stat-active{box-shadow:0 0 0 3px #9F7AEA,0 8px 28px rgba(109,40,217,.4)!important}
 .sval{font-size:34px;font-weight:900;color:#1a1a2e;line-height:1}
 .slbl{font-size:11px;color:#9ca3af;font-weight:600;margin-top:8px;text-transform:uppercase;letter-spacing:.6px}
 
@@ -269,23 +271,23 @@ body.dark .coach-tip{background:rgba(109,40,217,.18);color:#C0C0D5;border-left-c
 <div id="manager-view" class="main">
 
   <div class="stat-row">
-    <div class="card scard">
+    <div class="card scard" data-stat="stat-deals" onclick="clickStat('stat-deals')">
       <div class="sval" id="stat-deals">30</div>
       <div class="slbl">Active Deals</div>
     </div>
-    <div class="card scard">
+    <div class="card scard" data-stat="stat-flagged" onclick="clickStat('stat-flagged')">
       <div class="sval" id="stat-flagged" style="color:#EF4444">19</div>
       <div class="slbl">Deals Flagged</div>
     </div>
-    <div class="card scard">
+    <div class="card scard" data-stat="stat-arr" onclick="clickStat('stat-arr')">
       <div class="sval" id="stat-arr" style="color:#F97316">$2.09M</div>
       <div class="slbl">ARR at Risk</div>
     </div>
-    <div class="card scard">
+    <div class="card scard" data-stat="stat-score" onclick="clickStat('stat-score')">
       <div class="sval" id="stat-score">74</div>
       <div class="slbl">Avg Health Score</div>
     </div>
-    <div class="card scard">
+    <div class="card scard" data-stat="stat-forecast" onclick="clickStat('stat-forecast')">
       <div class="sval" id="stat-forecast" style="color:#6D28D9">$1.22M</div>
       <div class="slbl">Weighted Forecast</div>
     </div>
@@ -642,6 +644,8 @@ function initials(n){return n.split(' ').map(function(w){return w[0]||'';}).join
 var sortState = {col:'arr', dir:'desc'};
 var currentList = [];
 var modalOpenId = null;
+var statFilter = null;
+var activeStat = null;
 
 function showToast(msg){
   var t=document.getElementById('toast');
@@ -693,6 +697,7 @@ function getSubScores(d){
 
 function sortedFiltered(){
   var list=DEALS.slice();
+  if(statFilter==='flagged')list=list.filter(function(d){return d.health!=='h';});
   if(searchQuery){
     var q=searchQuery.toLowerCase();
     list=list.filter(function(d){
@@ -780,6 +785,79 @@ function renderFunnel(){
     var fills=document.querySelectorAll('.funnel-fill');
     for(var i=0;i<fills.length;i++)fills[i].style.width=fills[i].getAttribute('data-pct')+'%';
   },60);
+}
+
+function highlightStat(id){
+  var cards=document.querySelectorAll('.scard');
+  for(var i=0;i<cards.length;i++){
+    cards[i].classList.toggle('stat-active',cards[i].getAttribute('data-stat')===id&&id!==null);
+  }
+}
+
+function clickStat(id){
+  if(id==='stat-forecast'){openForecastModal();return;}
+  // clicking same card again resets
+  if(activeStat===id){
+    activeStat=null;statFilter=null;
+    sortState={col:'arr',dir:'desc'};
+    renderHead();renderTable();
+    highlightStat(null);
+    return;
+  }
+  activeStat=id;
+  sv('manager');
+  if(id==='stat-deals'){
+    statFilter=null;sortState={col:'arr',dir:'desc'};
+  } else if(id==='stat-flagged'||id==='stat-arr'){
+    statFilter='flagged';sortState={col:'arr',dir:'desc'};
+  } else if(id==='stat-score'){
+    statFilter=null;sortState={col:'score',dir:'asc'};
+  }
+  renderHead();renderTable();
+  highlightStat(id);
+  setTimeout(function(){
+    var tbl=document.querySelector('.tcard');
+    if(tbl)tbl.scrollIntoView({behavior:'smooth',block:'start'});
+  },120);
+}
+
+function openForecastModal(){
+  var stages=[
+    {name:'Prospecting',deals:3, arr:275000, prob:0.10},
+    {name:'Discovery',  deals:8, arr:830000, prob:0.20},
+    {name:'Demo',       deals:6, arr:670000, prob:0.35},
+    {name:'Proposal',   deals:9, arr:1005000,prob:0.55},
+    {name:'Negotiation',deals:4, arr:300000, prob:0.80}
+  ];
+  function fmt(n){return n>=1e6?'$'+(n/1e6).toFixed(2)+'M':'$'+(n/1000).toFixed(0)+'K';}
+  var total=0;
+  var h='<div class="modal-deal-name">Weighted Pipeline Forecast</div>';
+  h+='<div class="modal-ae" style="margin-bottom:18px">Stage win probabilities applied to total ARR per stage</div>';
+  h+='<hr class="modal-divider" style="margin-top:0">';
+  h+='<table style="width:100%;border-collapse:collapse;font-size:13px">';
+  h+='<thead><tr>';
+  ['Stage','Deals','Total ARR','Win %','Weighted'].forEach(function(col,i){
+    var align=i===0?'left':i===1||i===3?'center':'right';
+    h+='<th style="text-align:'+align+';padding:8px 6px;color:#9ca3af;font-weight:700;font-size:11px;text-transform:uppercase;border-bottom:2px solid #f3f4f6">'+col+'</th>';
+  });
+  h+='</tr></thead><tbody>';
+  for(var i=0;i<stages.length;i++){
+    var s=stages[i];var w=Math.round(s.arr*s.prob);total+=w;
+    h+='<tr>';
+    h+='<td style="padding:10px 6px;font-weight:600;border-bottom:1px solid #f3f4f6">'+s.name+'</td>';
+    h+='<td style="padding:10px 6px;text-align:center;color:#6b7280;border-bottom:1px solid #f3f4f6">'+s.deals+'</td>';
+    h+='<td style="padding:10px 6px;text-align:right;font-weight:600;border-bottom:1px solid #f3f4f6">'+fmt(s.arr)+'</td>';
+    h+='<td style="padding:10px 6px;text-align:center;border-bottom:1px solid #f3f4f6"><span style="background:#EDE9FE;color:#6D28D9;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px">'+(s.prob*100)+'%</span></td>';
+    h+='<td style="padding:10px 6px;text-align:right;font-weight:700;color:#6D28D9;border-bottom:1px solid #f3f4f6">'+fmt(w)+'</td>';
+    h+='</tr>';
+  }
+  h+='<tr><td colspan="4" style="padding:14px 6px;font-weight:700;font-size:14px">Total Weighted Forecast</td>';
+  h+='<td style="padding:14px 6px;text-align:right;font-size:22px;font-weight:900;color:#6D28D9">'+fmt(total)+'</td></tr>';
+  h+='</tbody></table>';
+  h+='<p style="font-size:11px;color:#9ca3af;margin-top:16px;text-align:center;line-height:1.5">Based on Gong historical close rates by stage &mdash; not a guarantee of revenue</p>';
+  document.getElementById('modal-content').innerHTML=h;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
 }
 
 function getCoachTip(d){
@@ -895,7 +973,7 @@ function sv(v){
   document.getElementById('bae').className=v==='ae'?'fb on':'fb';
   document.getElementById('manager-view').style.display=v==='manager'?'block':'none';
   document.getElementById('ae-view').style.display=v==='ae'?'block':'none';
-  if(v==='ae')renderAEView();
+  if(v==='ae'){renderAEView();activeStat=null;statFilter=null;highlightStat(null);}
 }
 
 function switchAE(aeName){

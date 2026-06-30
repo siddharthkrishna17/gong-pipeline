@@ -1,224 +1,130 @@
 {
-  "generated_date": "2026-06-29",
+  "generated_date": "2026-06-30",
   "summary": {
-    "total_deals": 20,
-    "flagged_count": 13,
-    "healthy_count": 7,
-    "arr_at_risk": 1320000,
-    "total_pipeline_arr": 1910000,
-    "avg_health_score": 63,
+    "total_deals": 30,
+    "flagged_count": 19,
+    "healthy_count": 11,
+    "arr_at_risk": 2090000,
+    "total_pipeline_arr": 3080000,
+    "avg_health_score": 74,
     "critical_count": 4,
-    "warning_count": 6,
-    "watch_count": 3
+    "warning_count": 10,
+    "watch_count": 5
   },
   "flagged_deals": [
     {
-      "deal_id": "D004", "deal_name": "Umbrella Corp New Logo", "account_name": "Umbrella Corp",
+      "deal_id": "D027", "deal_name": "Buy n Large", "account_name": "Buy n Large Corp",
+      "ae_name": "Marcus Webb", "stage": "Prospecting", "arr": 220000,
+      "health_category": "Critical", "health_score": 31, "days_since_activity": 35,
+      "flags": ["35 days dark", "No meeting booked despite 3 follow-up attempts", "Inbound VP lead going cold"]
+    },
+    {
+      "deal_id": "D004", "deal_name": "Umbrella Corp", "account_name": "Umbrella Corp",
       "ae_name": "James O'Brien", "stage": "Demo", "arr": 200000,
-      "health_category": "Critical", "health_score": 20, "days_since_activity": 40,
-      "score_breakdown": {
-        "activity_recency": { "raw_pct": 0, "weighted": 0.0, "note": "40 days since last activity — exceeds 30-day threshold" },
-        "deal_quality": { "raw_pct": 0, "weighted": 0.0, "note": "No champion, EB, pain, budget, criteria, or next step" },
-        "stage_close_alignment": { "raw_pct": 100, "weighted": 20.0, "note": "93 days to close, Demo needs 45+ — well aligned" },
-        "stage_velocity": { "raw_pct": 0, "weighted": 0.0, "note": "70 days in Demo, avg 14 days — 5x over" }
-      },
-      "flags": ["Champion departed", "No activity 40+ days", "Stuck in Demo 70 days"],
-      "email": {
-        "subject": "still relevant?",
-        "body": "— The contact we had been working with has since moved on. I don't want to let this go if there's still a problem worth solving at Umbrella Corp. If the initiative is still alive, I'd love 20 minutes with whoever has picked it up. Worth connecting?"
-      }
+      "health_category": "Critical", "health_score": 38, "days_since_activity": 40,
+      "flags": ["40 days dark", "Champion Lisa Chen departed", "No internal owner", "Compliance exposure growing"]
     },
     {
       "deal_id": "D008", "deal_name": "Vandelay Industries", "account_name": "Vandelay Industries",
       "ae_name": "James O'Brien", "stage": "Prospecting", "arr": 30000,
-      "health_category": "Critical", "health_score": 17, "days_since_activity": 60,
-      "score_breakdown": {
-        "activity_recency": { "raw_pct": 0, "weighted": 0.0, "note": "60 days since last activity — far exceeds threshold" },
-        "deal_quality": { "raw_pct": 0, "weighted": 0.0, "note": "No champion, EB, pain, budget, criteria, or next step" },
-        "stage_close_alignment": { "raw_pct": 86, "weighted": 17.3, "note": "78 days to close, Prospecting needs 90+ — slightly early" },
-        "stage_velocity": { "raw_pct": 0, "weighted": 0.0, "note": "75 days in Prospecting, avg 14 days — 5.3x over" }
-      },
-      "flags": ["Gone dark 60+ days", "No qualification data", "Stuck in Prospecting 75 days"],
-      "email": {
-        "subject": "the april call",
-        "body": "— We spoke back in April and then things went quiet. I'm not sure if the timing was wrong or if this isn't a priority right now. Either answer is fine — I'd just rather know than keep this open. Am I off base?"
-      }
-    },
-    {
-      "deal_id": "D013", "deal_name": "Soylent Corp", "account_name": "Soylent Corp",
-      "ae_name": "James O'Brien", "stage": "Demo", "arr": 40000,
-      "health_category": "Critical", "health_score": 22, "days_since_activity": 21,
-      "score_breakdown": {
-        "activity_recency": { "raw_pct": 30, "weighted": 10.5, "note": "21 days since last activity" },
-        "deal_quality": { "raw_pct": 0, "weighted": 0.0, "note": "No champion, EB, pain, budget, criteria, or next step" },
-        "stage_close_alignment": { "raw_pct": 58, "weighted": 11.6, "note": "26 days to close, Demo needs 45+ — too compressed" },
-        "stage_velocity": { "raw_pct": 0, "weighted": 0.0, "note": "28 days in Demo, avg 14 — 2x limit hit" }
-      },
-      "flags": ["No pain documented", "No champion or EB", "No next step post-demo", "Demo stuck 28 days"],
-      "email": {
-        "subject": "after the demo",
-        "body": "— We ran the demo a few weeks back and I haven't heard where things landed. Before the close window tightens, I want to make sure we actually addressed the right problem — not just ran a good show. Worth 15 minutes to see if there's a real fit here?"
-      }
+      "health_category": "Critical", "health_score": 38, "days_since_activity": 60,
+      "flags": ["60 days dark", "George (budget holder) unresponsive since April intro call"]
     },
     {
       "deal_id": "D016", "deal_name": "Bluth Company", "account_name": "Bluth Company",
       "ae_name": "Sarah Chen", "stage": "Prospecting", "arr": 25000,
-      "health_category": "Critical", "health_score": 20, "days_since_activity": 45,
-      "score_breakdown": {
-        "activity_recency": { "raw_pct": 0, "weighted": 0.0, "note": "45 days since last activity — past Critical threshold" },
-        "deal_quality": { "raw_pct": 0, "weighted": 0.0, "note": "No qualification data at all" },
-        "stage_close_alignment": { "raw_pct": 100, "weighted": 20.0, "note": "108 days to close, Prospecting needs 90+ — well aligned" },
-        "stage_velocity": { "raw_pct": 0, "weighted": 0.0, "note": "59 days in Prospecting, avg 14 — 4.2x over" }
-      },
-      "flags": ["No response to 2 outreaches", "Gone dark 45 days", "Zero qualification data"],
-      "email": {
-        "subject": "one more try",
-        "body": "— Reached out twice in May and haven't heard back. I'll keep this short: if the timing is off or this isn't a fit, just say so — that's genuinely useful. If there's still a problem to solve, I'm here. Still a priority?"
-      }
-    },
-    {
-      "deal_id": "D002", "deal_name": "Globex Platform Deal", "account_name": "Globex Inc",
-      "ae_name": "Marcus Webb", "stage": "Discovery", "arr": 120000,
-      "health_category": "Warning", "health_score": 33, "days_since_activity": 24,
-      "score_breakdown": {
-        "activity_recency": { "raw_pct": 20, "weighted": 7.0, "note": "24 days since last activity" },
-        "deal_quality": { "raw_pct": 0, "weighted": 0.0, "note": "No champion, EB, pain, budget, criteria, or next step" },
-        "stage_close_alignment": { "raw_pct": 78, "weighted": 15.7, "note": "47 days to close, Discovery needs 60+ — tight" },
-        "stage_velocity": { "raw_pct": 67, "weighted": 10.1, "note": "28 days in Discovery, avg 21 — 1.3x" }
-      },
-      "flags": ["No qualification after discovery call", "24 days no activity", "Close date tightening"],
-      "email": {
-        "subject": "the globex conversation",
-        "body": "— First call went well, but we haven't connected since and I've been guessing at what's actually broken for your team. That's not useful to either of us. Is there a specific problem driving this conversation, or has the timing shifted? Worth 20 minutes to find out?"
-      }
-    },
-    {
-      "deal_id": "D005", "deal_name": "Stark Industries POC", "account_name": "Stark Industries",
-      "ae_name": "Priya Nair", "stage": "Proposal", "arr": 95000,
-      "health_category": "Warning", "health_score": 78, "days_since_activity": 14,
-      "score_breakdown": {
-        "activity_recency": { "raw_pct": 53, "weighted": 18.7, "note": "14 days since last activity — triggers Warning override" },
-        "deal_quality": { "raw_pct": 80, "weighted": 24.0, "note": "EB, pain, budget, criteria, next step present — missing champion" },
-        "stage_close_alignment": { "raw_pct": 100, "weighted": 20.0, "note": "31 days to close, Proposal needs 30+" },
-        "stage_velocity": { "raw_pct": 100, "weighted": 15.0, "note": "21 days in Proposal, exactly at avg" }
-      },
-      "flags": ["No internal champion", "14 days no follow-up post-POC", "Close date in 31 days"],
-      "email": {
-        "subject": "poc results",
-        "body": "— The POC results are in hand. Without a clear internal champion to push this to Tony's desk, I've seen deals with this much momentum quietly expire. The legacy system outages aren't getting better. Worth a quick sync on who owns this internally?"
-      }
-    },
-    {
-      "deal_id": "D007", "deal_name": "Oscorp Upsell", "account_name": "Oscorp",
-      "ae_name": "Sarah Chen", "stage": "Proposal", "arr": 45000,
-      "health_category": "Warning", "health_score": 67, "days_since_activity": 19,
-      "score_breakdown": {
-        "activity_recency": { "raw_pct": 37, "weighted": 12.8, "note": "19 days since last activity — Warning by inactivity" },
-        "deal_quality": { "raw_pct": 100, "weighted": 30.0, "note": "Full MEDDPICC coverage" },
-        "stage_close_alignment": { "raw_pct": 70, "weighted": 14.0, "note": "21 days to close, Proposal needs 30+ — tight" },
-        "stage_velocity": { "raw_pct": 67, "weighted": 10.1, "note": "28 days in Proposal, avg 21 — 1.3x" }
-      },
-      "flags": ["Waiting on champion action 19 days", "Close date 21 days out", "Proposal stage 28 days"],
-      "email": {
-        "subject": "exec review timing",
-        "body": "— Norman, you mentioned locking in exec review — it's been 3 weeks and the compliance exposure you flagged isn't shrinking. A one-slide ask to the exec team takes 10 minutes to prep. We're down to 21 days. Worth setting that date this week?"
-      }
+      "health_category": "Critical", "health_score": 41, "days_since_activity": 45,
+      "flags": ["45 days dark", "Zero meetings booked", "Lucille (budget holder) never engaged"]
     },
     {
       "deal_id": "D011", "deal_name": "Hooli Enterprise", "account_name": "Hooli",
       "ae_name": "Sarah Chen", "stage": "Proposal", "arr": 180000,
-      "health_category": "Warning", "health_score": 46, "days_since_activity": 28,
-      "score_breakdown": {
-        "activity_recency": { "raw_pct": 7, "weighted": 2.3, "note": "28 days since last activity — near Critical threshold" },
-        "deal_quality": { "raw_pct": 75, "weighted": 22.5, "note": "EB, pain, budget, criteria present — no champion, weak next step" },
-        "stage_close_alignment": { "raw_pct": 100, "weighted": 20.0, "note": "52 days to close, Proposal needs 30+" },
-        "stage_velocity": { "raw_pct": 10, "weighted": 1.5, "note": "40 days in Proposal, avg 21 — 1.9x, near limit" }
-      },
-      "flags": ["Champion went dark 28 days", "No champion identified", "Vendor contract expires Sept"],
-      "email": {
-        "subject": "the vendor deadline",
-        "body": "— Your current vendor contract expires in September. That's 10 weeks out, and standing up a new platform takes time you don't have once legal gets involved. I know things went quiet — has the priority shifted, or is there a blocker I can help clear? Still a priority?"
-      }
+      "health_category": "Warning", "health_score": 54, "days_since_activity": 28,
+      "flags": ["28 days dark", "Hard deadline Sept 1 — $400K penalty if missed", "Champion not re-engaged since June 1"]
+    },
+    {
+      "deal_id": "D023", "deal_name": "Weyland-Yutani Corp", "account_name": "Weyland-Yutani",
+      "ae_name": "Marcus Webb", "stage": "Demo", "arr": 175000,
+      "health_category": "Warning", "health_score": 53, "days_since_activity": 20,
+      "flags": ["20 days dark", "Security compliance docs 2 weeks overdue", "Economic buyer not engaged post-demo"]
+    },
+    {
+      "deal_id": "D002", "deal_name": "Globex Platform Deal", "account_name": "Globex Inc",
+      "ae_name": "Marcus Webb", "stage": "Discovery", "arr": 120000,
+      "health_category": "Warning", "health_score": 59, "days_since_activity": 24,
+      "flags": ["24 days dark", "Second discovery call never scheduled after strong first call"]
     },
     {
       "deal_id": "D018", "deal_name": "Prestige Worldwide", "account_name": "Prestige Worldwide",
       "ae_name": "Marcus Webb", "stage": "Discovery", "arr": 110000,
-      "health_category": "Warning", "health_score": 54, "days_since_activity": 17,
-      "score_breakdown": {
-        "activity_recency": { "raw_pct": 43, "weighted": 15.2, "note": "17 days since last activity — Warning by inactivity" },
-        "deal_quality": { "raw_pct": 15, "weighted": 4.5, "note": "EB present only — no champion, pain, budget, criteria, or next step" },
-        "stage_close_alignment": { "raw_pct": 95, "weighted": 19.0, "note": "57 days to close, Discovery needs 60+ — marginally tight" },
-        "stage_velocity": { "raw_pct": 100, "weighted": 15.0, "note": "19 days in Discovery, avg 21 — good velocity" }
-      },
-      "flags": ["No pain documented", "No champion", "No next step", "Intro call only — needs real discovery"],
-      "email": {
-        "subject": "what are we solving",
-        "body": "— We had an intro call a few weeks back but I'm not sure we ever landed on the actual problem. That makes it hard to show you something useful. Is there a specific bottleneck driving this conversation — or did I miss the real issue on our first call? Worth 20 minutes to find out?"
-      }
+      "health_category": "Warning", "health_score": 60, "days_since_activity": 17,
+      "flags": ["17 days dark", "No champion identified", "No next step defined post-intro call"]
+    },
+    {
+      "deal_id": "D005", "deal_name": "Stark Industries POC", "account_name": "Stark Industries",
+      "ae_name": "Priya Nair", "stage": "Proposal", "arr": 95000,
+      "health_category": "Warning", "health_score": 84, "days_since_activity": 14,
+      "flags": ["14 days dark", "POC review meeting not scheduled", "Tony Stark (EB) not driving urgency"]
+    },
+    {
+      "deal_id": "D026", "deal_name": "Monsters Inc", "account_name": "Monsters Inc",
+      "ae_name": "Sarah Chen", "stage": "Discovery", "arr": 95000,
+      "health_category": "Warning", "health_score": 67, "days_since_activity": 16,
+      "flags": ["16 days dark", "Discovery call 2 never scheduled", "CTO initiated outreach but momentum stalled"]
+    },
+    {
+      "deal_id": "D029", "deal_name": "Frobozz Magic", "account_name": "Frobozz Magic Co",
+      "ae_name": "James O'Brien", "stage": "Proposal", "arr": 80000,
+      "health_category": "Warning", "health_score": 71, "days_since_activity": 22,
+      "flags": ["22 days dark", "Gerald (EB) sign-off pending with no response", "2 follow-ups sent since June 7"]
     },
     {
       "deal_id": "D020", "deal_name": "Dharma Initiative", "account_name": "Dharma Initiative",
       "ae_name": "Sarah Chen", "stage": "Proposal", "arr": 70000,
-      "health_category": "Warning", "health_score": 36, "days_since_activity": 26,
-      "score_breakdown": {
-        "activity_recency": { "raw_pct": 13, "weighted": 4.7, "note": "26 days since last activity" },
-        "deal_quality": { "raw_pct": 20, "weighted": 6.0, "note": "Budget confirmed only — no champion, EB, pain, criteria, or next step" },
-        "stage_close_alignment": { "raw_pct": 100, "weighted": 20.0, "note": "32 days to close, Proposal needs 30+" },
-        "stage_velocity": { "raw_pct": 33, "weighted": 5.0, "note": "35 days in Proposal, avg 21 — 1.67x" }
-      },
-      "flags": ["No champion or EB identified", "No pain documented", "Budget exists — deal lacks business case"],
-      "email": {
-        "subject": "budget without a problem",
-        "body": "— Budget's locked in but I realize we never nailed down what's actually broken for your team — that's on me. Before the close date arrives, I'd rather have a real problem to solve than a clean number in the CRM. Worth 20 minutes to get aligned?"
-      }
+      "health_category": "Warning", "health_score": 57, "days_since_activity": 26,
+      "flags": ["26 days dark", "Champion silent after proposal sent June 3", "Budget approved but deal stalled"]
+    },
+    {
+      "deal_id": "D007", "deal_name": "Oscorp Upsell", "account_name": "Oscorp",
+      "ae_name": "Sarah Chen", "stage": "Proposal", "arr": 45000,
+      "health_category": "Warning", "health_score": 72, "days_since_activity": 19,
+      "flags": ["19 days dark", "Board meeting July 15 approaching", "Exec review date unconfirmed"]
+    },
+    {
+      "deal_id": "D013", "deal_name": "Soylent Corp", "account_name": "Soylent Corp",
+      "ae_name": "James O'Brien", "stage": "Demo", "arr": 40000,
+      "health_category": "Warning", "health_score": 43, "days_since_activity": 21,
+      "flags": ["21 days dark", "Zero next steps after demo", "Martha (EB) never engaged"]
+    },
+    {
+      "deal_id": "D014", "deal_name": "Cyberdyne Systems", "account_name": "Cyberdyne Systems",
+      "ae_name": "Marcus Webb", "stage": "Proposal", "arr": 250000,
+      "health_category": "Watch", "health_score": 77, "days_since_activity": 11,
+      "flags": ["11 days dark", "CFO Peter Silberman never engaged", "Largest deal in pipeline"]
+    },
+    {
+      "deal_id": "D028", "deal_name": "Omni Consumer Products", "account_name": "Omni Consumer Products",
+      "ae_name": "Priya Nair", "stage": "Demo", "arr": 115000,
+      "health_category": "Watch", "health_score": 91, "days_since_activity": 8,
+      "flags": ["8 days dark", "CFO-requested ROI model 5 days overdue"]
     },
     {
       "deal_id": "D012", "deal_name": "Massive Dynamic", "account_name": "Massive Dynamic",
       "ae_name": "Priya Nair", "stage": "Discovery", "arr": 90000,
       "health_category": "Watch", "health_score": 86, "days_since_activity": 7,
-      "score_breakdown": {
-        "activity_recency": { "raw_pct": 77, "weighted": 26.8, "note": "7 days since last activity — triggers Watch override" },
-        "deal_quality": { "raw_pct": 80, "weighted": 24.0, "note": "Champion, EB, pain, criteria, next step — no budget yet" },
-        "stage_close_alignment": { "raw_pct": 100, "weighted": 20.0, "note": "64 days to close, Discovery needs 60+" },
-        "stage_velocity": { "raw_pct": 100, "weighted": 15.0, "note": "14 days in Discovery, avg 21 — good velocity" }
-      },
-      "flags": ["No budget confirmed", "7 days no activity — Watch threshold"],
-      "email": {
-        "subject": "the r&d data problem",
-        "body": "— Nina, you mentioned data silos slowing experiment cycles — I've seen that cost teams 2-3 weeks per cycle when reports live in disconnected systems. Before the technical team intro next week, want to align on what you'd specifically need to see from us to move this forward?"
-      }
+      "flags": ["7 days dark", "Technical intro imminent but no pre-call prep done"]
     },
     {
-      "deal_id": "D014", "deal_name": "Cyberdyne Systems", "account_name": "Cyberdyne Systems",
-      "ae_name": "Marcus Webb", "stage": "Proposal", "arr": 250000,
-      "health_category": "Watch", "health_score": 65, "days_since_activity": 11,
-      "score_breakdown": {
-        "activity_recency": { "raw_pct": 63, "weighted": 22.2, "note": "11 days since last activity — Watch by inactivity" },
-        "deal_quality": { "raw_pct": 25, "weighted": 7.5, "note": "Champion present only — no EB, pain undocumented, no budget or criteria" },
-        "stage_close_alignment": { "raw_pct": 100, "weighted": 20.0, "note": "63 days to close, Proposal needs 30+" },
-        "stage_velocity": { "raw_pct": 100, "weighted": 15.0, "note": "19 days in Proposal, avg 21 — on track" }
-      },
-      "flags": ["Largest deal — no follow-up after proposal", "No pain or EB documented", "11 days silence post-proposal"],
-      "email": {
-        "subject": "the proposal",
-        "body": "— Miles, you've had the proposal for close to two weeks. A $250K decision deserves a real conversation, not just a document sitting in your inbox. Is there something specific in the proposal that's giving you pause — or has the priority shifted on your end?"
-      }
+      "deal_id": "D022", "deal_name": "Wernham Hogg", "account_name": "Wernham Hogg Ltd",
+      "ae_name": "James O'Brien", "stage": "Discovery", "arr": 85000,
+      "health_category": "Watch", "health_score": 79, "days_since_activity": 10,
+      "flags": ["10 days dark", "Technical eval never scheduled despite agreement"]
     },
     {
       "deal_id": "D017", "deal_name": "Sterling Archer LLC", "account_name": "Sterling Archer LLC",
       "ae_name": "James O'Brien", "stage": "Demo", "arr": 65000,
       "health_category": "Watch", "health_score": 88, "days_since_activity": 9,
-      "score_breakdown": {
-        "activity_recency": { "raw_pct": 70, "weighted": 24.5, "note": "9 days since last activity — Watch by inactivity" },
-        "deal_quality": { "raw_pct": 100, "weighted": 30.0, "note": "Full MEDDPICC coverage" },
-        "stage_close_alignment": { "raw_pct": 93, "weighted": 18.7, "note": "42 days to close, Demo needs 45+ — slightly tight" },
-        "stage_velocity": { "raw_pct": 100, "weighted": 15.0, "note": "14 days in Demo, exactly at avg" }
-      },
-      "flags": ["Decision maker unanswered 9 days", "Close date 42 days — slightly compressed for Demo stage"],
-      "email": {
-        "subject": "demo follow-up",
-        "body": "— Malory, you had questions after the demo and I sent answers over — but haven't heard back. Your field team is still working blind on the road, and that's not getting better on its own. Worth a 20-minute call to close this out?"
-      }
+      "flags": ["9 days dark", "3 demo follow-up answers sent June 20 — no acknowledgement"]
     }
   ]
 }

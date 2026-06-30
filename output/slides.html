@@ -3,360 +3,336 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pipeline Intelligence — GTM Cohort 2026</title>
+<title>DealPulse — GTM Cohort 2026</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;font-family:system-ui,-apple-system,Inter,sans-serif;background:#0F0F13}
 
-/* ── PROGRESS BAR ───────────────────────────── */
+/* ── PROGRESS BAR ─────────────────────────── */
 #progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#6D28D9,#9F7AEA);z-index:999;transition:width .5s cubic-bezier(.4,0,.2,1)}
 
-/* ── LOGO ───────────────────────────────────── */
-#logo{position:fixed;top:28px;left:36px;font-size:20px;font-weight:800;letter-spacing:-.5px;z-index:200;transition:color .4s}
-#logo span{transition:color .4s}
+/* ── LOGO ─────────────────────────────────── */
+#logo{position:fixed;top:30px;left:44px;font-size:20px;font-weight:800;letter-spacing:-.3px;z-index:200;transition:color .4s;user-select:none}
 
-/* ── SLIDE COUNTER ──────────────────────────── */
-#counter{position:fixed;bottom:28px;right:36px;font-size:11px;font-weight:700;letter-spacing:1px;z-index:200;transition:color .4s}
+/* ── SLIDE COUNTER ────────────────────────── */
+#counter{position:fixed;top:30px;right:44px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;z-index:200;transition:color .4s}
 
-/* ── NAV DOTS ───────────────────────────────── */
-#dots{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:200;align-items:center}
+/* ── NAV DOTS ─────────────────────────────── */
+#dots{position:fixed;bottom:34px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:200;align-items:center}
 .dot{width:6px;height:6px;border-radius:3px;cursor:pointer;transition:all .35s cubic-bezier(.4,0,.2,1)}
-.dot.active{width:22px}
+.dot.on{width:24px}
 
-/* ── KBD HINT ───────────────────────────────── */
-#kbd{position:fixed;bottom:28px;left:36px;font-size:11px;font-weight:500;z-index:200;display:flex;align-items:center;gap:5px;transition:color .4s}
-.k{padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;font-family:monospace;transition:background .4s,border .4s,color .4s}
-
-/* ── CLICK ZONES ────────────────────────────── */
-#pz,#nz{position:fixed;top:0;bottom:0;width:20%;z-index:50;cursor:pointer}
+/* ── CLICK ZONES ──────────────────────────── */
+#pz,#nz{position:fixed;top:0;bottom:0;width:15%;z-index:50;cursor:pointer}
 #pz{left:0}
 #nz{right:0}
 
-/* ── SLIDES ─────────────────────────────────── */
-.slide{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:80px 80px 72px;
-  opacity:0;pointer-events:none;transition:opacity .45s ease}
+/* ── BASE SLIDE ───────────────────────────── */
+.slide{position:fixed;inset:0;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;padding:90px 110px 80px;
+  opacity:0;pointer-events:none;transition:opacity .5s ease}
 .slide.active{opacity:1;pointer-events:auto}
 
-/* ── REVEAL SYSTEM ──────────────────────────── */
-.rv{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
+/* ── REVEAL STAGGER ───────────────────────── */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
 .active .rv{opacity:1;transform:none}
-.d1{transition-delay:.08s}.d2{transition-delay:.2s}.d3{transition-delay:.34s}
-.d4{transition-delay:.48s}.d5{transition-delay:.62s}.d6{transition-delay:.76s}
+.d1{transition-delay:.06s}.d2{transition-delay:.2s}.d3{transition-delay:.36s}
+.d4{transition-delay:.52s}.d5{transition-delay:.68s}
 
-/* ── DARK GRADIENT SLIDES (1, 3, 6) ─────────── */
+/* ── DARK GRADIENT (slides 1, 3, 6) ──────── */
 .dk{background:linear-gradient(140deg,#16102A 0%,#2D1B69 55%,#4C1D95 100%)}
 .dk::before{content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);
-  background-size:44px 44px;pointer-events:none;z-index:0}
+  background-image:radial-gradient(circle,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:52px 52px;pointer-events:none;z-index:0}
 .dk>*{position:relative;z-index:1}
 
-/* ── PURE DARK SLIDES (5) ───────────────────── */
-.pd{background:#0F0F13}
-
-/* ── LIGHT SLIDES (2, 4) ────────────────────── */
+/* ── LIGHT (slides 2, 4) ──────────────────── */
 .lt{background:#ECEEF3}
 
-/* ════════════════════════════════════════════════
+/* ── NEAR-DARK (slide 5) ──────────────────── */
+.nd{background:#0F0F13}
+
+/* ══════════════════════════════════════════
    SLIDE 1 — TITLE
-═════════════════════════════════════════════════ */
-.s1-over{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
-  color:rgba(255,255,255,.4);margin-bottom:22px;text-align:center}
-.s1-h{font-size:88px;font-weight:900;color:#fff;line-height:.95;letter-spacing:-4px;
-  text-align:center;margin-bottom:22px}
-.s1-h em{color:#9F7AEA;font-style:normal}
-.s1-sub{font-size:20px;font-weight:400;color:rgba(255,255,255,.5);
-  text-align:center;letter-spacing:-.3px;margin-bottom:48px}
+══════════════════════════════════════════ */
+.s1-over{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(255,255,255,.36);margin-bottom:30px;text-align:center}
+.s1-name{font-size:116px;font-weight:900;color:#fff;line-height:.9;
+  letter-spacing:-6px;text-align:center;margin-bottom:18px}
+.s1-name em{color:#9F7AEA;font-style:normal}
+.s1-type{font-size:18px;font-weight:600;color:rgba(255,255,255,.38);
+  text-align:center;letter-spacing:4px;text-transform:uppercase;margin-bottom:24px}
+.s1-sub{font-size:21px;font-weight:400;color:rgba(255,255,255,.6);
+  text-align:center;max-width:580px;line-height:1.5;margin-bottom:54px}
 .s1-chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-.s1-chip{font-size:11px;font-weight:600;padding:6px 16px;border-radius:20px;
-  border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.55);letter-spacing:.4px}
+.s1-chip{font-size:12px;font-weight:600;padding:8px 20px;border-radius:20px;
+  border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.48);letter-spacing:.3px}
 
-/* ════════════════════════════════════════════════
+/* ══════════════════════════════════════════
    SLIDE 2 — THE PROBLEM
-═════════════════════════════════════════════════ */
-.s2-h{font-size:62px;font-weight:900;color:#1a1a2e;letter-spacing:-2.5px;
-  text-align:center;line-height:1;margin-bottom:10px}
-.s2-sub{font-size:16px;color:#6b7280;text-align:center;margin-bottom:52px;font-weight:500}
-.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%;max-width:880px}
-.tcard{background:#fff;border-radius:20px;padding:36px 28px;border:1px solid #e8eaee;
-  box-shadow:0 4px 20px rgba(0,0,0,.07);text-align:center}
-.tcard.grad{background:linear-gradient(140deg,#16102A 0%,#2D1B69 55%,#4C1D95 100%);border-color:transparent}
-.tn{font-size:72px;font-weight:900;line-height:1;margin-bottom:10px;letter-spacing:-2px}
-.tcard.grad .tn{color:#fff}
-.tn.red{color:#EF4444}.tn.orange{color:#F97316}
-.td{font-size:13px;color:#6b7280;font-weight:500;line-height:1.55}
-.tcard.grad .td{color:rgba(255,255,255,.5)}
+══════════════════════════════════════════ */
+.s2-h{font-size:70px;font-weight:900;color:#111827;letter-spacing:-3px;
+  text-align:center;line-height:1;margin-bottom:16px}
+.s2-sub{font-size:19px;color:#6b7280;text-align:center;margin-bottom:56px;font-weight:400}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;width:100%;max-width:920px}
+.pcard{background:#fff;border-radius:24px;padding:44px 32px 40px;
+  border:1px solid #e5e7eb;box-shadow:0 4px 28px rgba(0,0,0,.07);text-align:center}
+.pcard.gd{background:linear-gradient(140deg,#16102A 0%,#2D1B69 55%,#4C1D95 100%);border-color:transparent}
+.pnum{font-size:80px;font-weight:900;line-height:1;margin-bottom:14px;letter-spacing:-2px}
+.pcard.gd .pnum{color:#fff}
+.pnum.red{color:#EF4444}
+.pnum.or{color:#F97316}
+.pdesc{font-size:15px;color:#6b7280;font-weight:400;line-height:1.65}
+.pcard.gd .pdesc{color:rgba(255,255,255,.5)}
 
-/* ════════════════════════════════════════════════
+/* ══════════════════════════════════════════
    SLIDE 3 — DEMO TRANSITION
-═════════════════════════════════════════════════ */
-.s3-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
-  color:rgba(255,255,255,.35);margin-bottom:22px}
-.s3-h{font-size:72px;font-weight:900;color:#fff;letter-spacing:-3px;
-  text-align:center;line-height:1;margin-bottom:36px}
-.s3-url{font-size:16px;font-weight:600;color:#9F7AEA;
-  background:rgba(255,255,255,.07);padding:12px 28px;border-radius:14px;
-  border:1px solid rgba(255,255,255,.12);letter-spacing:.5px}
+══════════════════════════════════════════ */
+.s3-label{font-size:11px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.3);margin-bottom:26px}
+.s3-h{font-size:84px;font-weight:900;color:#fff;letter-spacing:-4px;
+  text-align:center;line-height:.95;margin-bottom:32px}
+.s3-primer{font-size:22px;font-weight:400;color:rgba(255,255,255,.6);
+  text-align:center;line-height:1.8;margin-bottom:40px}
+.s3-primer strong{color:#C4B5FD;font-weight:700}
+.s3-url{font-size:14px;font-weight:600;color:#9F7AEA;
+  background:rgba(255,255,255,.07);padding:12px 30px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);letter-spacing:.8px}
 
-/* ════════════════════════════════════════════════
+/* ══════════════════════════════════════════
    SLIDE 4 — HOW WE BUILT IT
-═════════════════════════════════════════════════ */
-.s4-h{font-size:52px;font-weight:900;color:#1a1a2e;letter-spacing:-2px;
-  margin-bottom:8px;text-align:center}
-.s4-sub{font-size:15px;color:#6b7280;text-align:center;margin-bottom:44px;font-weight:500}
-.flow{display:flex;align-items:center;width:100%;max-width:960px;gap:0}
-.fn{flex:1;background:#fff;border:1px solid #e8eaee;border-radius:18px;
-  padding:22px 20px;text-align:center;box-shadow:0 2px 14px rgba(0,0,0,.06)}
-.fn.cc{background:linear-gradient(140deg,#16102A,#2D1B69,#4C1D95);border-color:transparent;flex:1.2}
-.fn-badge{width:44px;height:44px;border-radius:12px;margin:0 auto 10px;
+══════════════════════════════════════════ */
+.s4-h{font-size:58px;font-weight:900;color:#111827;letter-spacing:-2.5px;
+  margin-bottom:10px;text-align:center}
+.s4-sub{font-size:19px;color:#6b7280;text-align:center;margin-bottom:52px;font-weight:400}
+.flow{display:flex;align-items:stretch;width:100%;max-width:1000px;gap:0}
+.fnode{flex:1;background:#fff;border:1px solid #e5e7eb;border-radius:22px;
+  padding:30px 24px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);
+  display:flex;flex-direction:column;align-items:center;justify-content:center}
+.fnode.cc{background:linear-gradient(140deg,#16102A,#2D1B69,#4C1D95);
+  border-color:transparent;flex:1.3}
+.fbadge{width:50px;height:50px;border-radius:14px;margin:0 auto 14px;
   display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:800;background:#f3f4f6;color:#6D28D9}
-.fn.cc .fn-badge{background:rgba(255,255,255,.15);color:#fff}
-.fn-t{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:4px}
-.fn.cc .fn-t{color:#fff}
-.fn-d{font-size:11px;color:#9ca3af;line-height:1.5}
-.fn.cc .fn-d{color:rgba(255,255,255,.5)}
-.farr{font-size:20px;color:#6D28D9;font-weight:900;padding:0 12px;flex-shrink:0}
-.fplus{font-size:16px;color:#9ca3af;padding:0 8px;flex-shrink:0}
-.cc-note{margin-top:36px;display:inline-flex;align-items:center;gap:10px;
-  background:#1a1a2e;color:#fff;padding:10px 22px;border-radius:14px;
-  font-size:12px;font-weight:600;letter-spacing:.2px}
-.cc-dot{width:8px;height:8px;background:#22C55E;border-radius:50%;
-  animation:ccpulse 2s infinite;flex-shrink:0}
-@keyframes ccpulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}60%{box-shadow:0 0 0 5px rgba(34,197,94,0)}}
-.cc-sep{color:rgba(255,255,255,.3);margin:0 4px}
+  font-size:12px;font-weight:800;background:#f3f4f6;color:#6D28D9}
+.fnode.cc .fbadge{background:rgba(255,255,255,.15);color:#fff}
+.ftitle{font-size:15px;font-weight:700;color:#111827;margin-bottom:8px}
+.fnode.cc .ftitle{color:#fff;font-size:16px}
+.fdesc{font-size:12px;color:#9ca3af;line-height:1.65}
+.fnode.cc .fdesc{color:rgba(255,255,255,.5);font-size:13px}
+.farr{font-size:22px;color:#6D28D9;padding:0 14px;flex-shrink:0;
+  display:flex;align-items:center;font-weight:900}
+.fplus{font-size:18px;color:#d1d5db;padding:0 10px;flex-shrink:0;
+  display:flex;align-items:center}
 
-/* ════════════════════════════════════════════════
+/* ══════════════════════════════════════════
    SLIDE 5 — THE NUMBERS
-═════════════════════════════════════════════════ */
-.s5-h{font-size:52px;font-weight:900;color:#F0F0F5;letter-spacing:-2px;
-  text-align:center;margin-bottom:8px}
-.s5-sub{font-size:15px;color:#8888A8;text-align:center;margin-bottom:44px;font-weight:500}
-.ngrid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;width:100%;max-width:1060px}
-.nc{background:#1A1A24;border:1px solid #2A2A38;border-radius:20px;padding:28px 16px;text-align:center}
-.nc.grad{background:linear-gradient(140deg,#16102A,#2D1B69,#4C1D95);border-color:transparent}
-.nv{font-size:44px;font-weight:900;line-height:1;margin-bottom:8px;letter-spacing:-1px}
-.nc.grad .nv{color:#fff}
-.nv.red{color:#EF4444}.nv.or{color:#F97316}.nv.gr{color:#22C55E}.nv.pu{color:#9F7AEA}
-.nl{font-size:10px;font-weight:700;color:#8888A8;text-transform:uppercase;letter-spacing:.8px;line-height:1.4}
-.nc.grad .nl{color:rgba(255,255,255,.4)}
+══════════════════════════════════════════ */
+.s5-h{font-size:58px;font-weight:900;color:#F0F0F5;letter-spacing:-2.5px;
+  text-align:center;margin-bottom:10px}
+.s5-sub{font-size:18px;color:#8888A8;text-align:center;margin-bottom:52px;font-weight:400}
+.ngrid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;
+  width:100%;max-width:1100px}
+.nc{background:#1A1A24;border:1px solid #2A2A38;border-radius:22px;
+  padding:34px 16px;text-align:center}
+.nc.gd{background:linear-gradient(140deg,#16102A,#2D1B69,#4C1D95);border-color:transparent}
+.nval{font-size:50px;font-weight:900;line-height:1;margin-bottom:12px;letter-spacing:-1px}
+.nc.gd .nval{color:#fff}
+.nval.red{color:#EF4444}
+.nval.or{color:#F97316}
+.nval.gr{color:#22C55E}
+.nval.pu{color:#9F7AEA}
+.nlabel{font-size:11px;font-weight:700;color:#8888A8;
+  text-transform:uppercase;letter-spacing:1.2px;line-height:1.5}
+.nc.gd .nlabel{color:rgba(255,255,255,.4)}
 
-/* ════════════════════════════════════════════════
+/* ══════════════════════════════════════════
    SLIDE 6 — THE CLOSE
-═════════════════════════════════════════════════ */
-.s6-q{font-size:52px;font-weight:900;color:#fff;line-height:1.15;
-  letter-spacing:-2px;text-align:center;max-width:820px;margin-bottom:10px}
+══════════════════════════════════════════ */
+.s6-q{font-size:54px;font-weight:900;color:#fff;line-height:1.2;
+  letter-spacing:-2px;text-align:center;max-width:880px;margin-bottom:18px}
 .s6-q em{color:#9F7AEA;font-style:normal}
-.s6-attr{font-size:14px;color:rgba(255,255,255,.35);text-align:center;margin-bottom:44px;font-weight:500}
+.s6-attr{font-size:13px;color:rgba(255,255,255,.3);text-align:center;
+  margin-bottom:50px;font-weight:500;letter-spacing:.8px;text-transform:uppercase}
 .s6-chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-.s6c{font-size:12px;font-weight:600;padding:8px 18px;border-radius:20px;
-  border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.55)}
-.s6c.hl{background:rgba(109,40,217,.35);border-color:rgba(109,40,217,.6);color:#C4B5FD}
+.s6c{font-size:13px;font-weight:600;padding:10px 22px;border-radius:20px;
+  border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.48)}
+.s6c.hl{background:rgba(109,40,217,.3);border-color:rgba(109,40,217,.55);color:#C4B5FD}
 </style>
 </head>
 <body>
 
-<!-- PERSISTENT CHROME -->
 <div id="logo"></div>
 <div id="progress" style="width:0%"></div>
 <div id="counter"></div>
 <div id="dots"></div>
-<div id="kbd"></div>
 <div id="pz" onclick="prev()"></div>
 <div id="nz" onclick="next()"></div>
 
-<!-- ══════════════════════════════════════════════
+<!-- ══════════════════════════════════════════
      SLIDE 1 · TITLE
-══════════════════════════════════════════════ -->
+══════════════════════════════════════════ -->
 <div class="slide dk" id="s0">
-  <div class="s1-over rv d1">GTM Cohort &nbsp;·&nbsp; Claude Code &nbsp;·&nbsp; June 2026</div>
-  <div class="s1-h rv d2">Pipeline<br><em>Intelligence</em></div>
-  <div class="s1-sub rv d3">Weekly pipeline reviews, reimagined.</div>
-  <div class="s1-chips rv d4">
+  <div class="s1-over rv d1">GTM Cohort &nbsp;&middot;&nbsp; Claude Code &nbsp;&middot;&nbsp; Siddharth Krishna</div>
+  <div class="s1-name rv d2">Deal<em>Pulse</em></div>
+  <div class="s1-type rv d3">Pipeline Intelligence</div>
+  <div class="s1-sub rv d4">Built to surface what your CRM was never designed to show.</div>
+  <div class="s1-chips rv d5">
     <span class="s1-chip">30 Deals Scored</span>
     <span class="s1-chip">$3.08M Pipeline</span>
-    <span class="s1-chip">MEDDPICC &amp; SPRY Frameworks</span>
+    <span class="s1-chip">MEDDPICC Framework</span>
     <span class="s1-chip">gong-pipeline.vercel.app</span>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
+<!-- ══════════════════════════════════════════
      SLIDE 2 · THE PROBLEM
-══════════════════════════════════════════════ -->
+══════════════════════════════════════════ -->
 <div class="slide lt" id="s1">
   <div class="s2-h rv d1">Your pipeline is lying to you.</div>
-  <div class="s2-sub rv d2">And the weekly review meeting isn't fixing it.</div>
+  <div class="s2-sub rv d2">And the weekly review meeting isn&rsquo;t fixing it.</div>
   <div class="trio rv d3">
-    <div class="tcard grad">
-      <div class="tn">4+</div>
-      <div class="td">hours spent every week in pipeline reviews built on gut feel and stale CRM data</div>
+    <div class="pcard gd">
+      <div class="pnum">4+</div>
+      <div class="pdesc">hours spent every week in pipeline reviews built on gut feel and stale CRM data</div>
     </div>
-    <div class="tcard">
-      <div class="tn red">28%</div>
-      <div class="td">of forecasted pipeline never closes &mdash; not because of bad selling, but bad hygiene</div>
+    <div class="pcard">
+      <div class="pnum red">$2.09M</div>
+      <div class="pdesc">in ARR sitting in deals with broken signals right now</div>
     </div>
-    <div class="tcard">
-      <div class="tn orange">$0</div>
-      <div class="td">recovered by sending another &ldquo;just checking in&rdquo; email to a deal gone dark</div>
+    <div class="pcard">
+      <div class="pnum or">$0</div>
+      <div class="pdesc">recovered by sending another &ldquo;just checking in&rdquo; email to a deal gone dark</div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
+<!-- ══════════════════════════════════════════
      SLIDE 3 · DEMO TRANSITION
-══════════════════════════════════════════════ -->
+══════════════════════════════════════════ -->
 <div class="slide dk" id="s2">
   <div class="s3-label rv d1">Live product</div>
-  <div class="s3-h rv d2">Let&rsquo;s look at<br>what we built.</div>
-  <div class="s3-url rv d3">gong-pipeline.vercel.app</div>
+  <div class="s3-h rv d2">Here&rsquo;s what I built.</div>
+  <div class="s3-primer rv d3">
+    <strong>Every deal scored.</strong>&nbsp;&nbsp;Every risk flagged.&nbsp;&nbsp;Every email drafted.
+  </div>
+  <div class="s3-url rv d4">gong-pipeline.vercel.app</div>
 </div>
 
-<!-- ══════════════════════════════════════════════
+<!-- ══════════════════════════════════════════
      SLIDE 4 · HOW WE BUILT IT
-══════════════════════════════════════════════ -->
+══════════════════════════════════════════ -->
 <div class="slide lt" id="s3">
   <div class="s4-h rv d1">Built with Claude Code.</div>
-  <div class="s4-sub rv d2">One input. Four outputs. No engineers. No sprints.</div>
+  <div class="s4-sub rv d2">From a spreadsheet to a live intelligence tool.</div>
   <div class="flow rv d3">
-    <div class="fn">
-      <div class="fn-badge">CSV</div>
-      <div class="fn-t">deals.csv</div>
-      <div class="fn-d">30 deals, 15+ fields each. The source of truth. Never overwritten.</div>
+    <div class="fnode">
+      <div class="fbadge">CSV</div>
+      <div class="ftitle">deals.csv</div>
+      <div class="fdesc">30 deals, 15+ fields each. The source of truth. Never overwritten.</div>
     </div>
     <div class="farr">&#8594;</div>
-    <div class="fn cc">
-      <div class="fn-badge">AI</div>
-      <div class="fn-t">Claude Code</div>
-      <div class="fn-d">Scores every deal. Flags risk categories. Writes re-engagement emails. Builds the dashboard.</div>
+    <div class="fnode cc">
+      <div class="fbadge">AI</div>
+      <div class="ftitle">Claude Code</div>
+      <div class="fdesc">Scores every deal. Flags every risk. Drafts re-engagement emails. Builds the dashboard.</div>
     </div>
     <div class="farr">&#8594;</div>
-    <div class="fn">
-      <div class="fn-badge">UI</div>
-      <div class="fn-t">Dashboard</div>
-      <div class="fn-d">Live HTML. Self-contained. Deployed to Vercel. Shareable via URL.</div>
+    <div class="fnode">
+      <div class="fbadge">UI</div>
+      <div class="ftitle">Dashboard</div>
+      <div class="fdesc">Live HTML. Self-contained. Deployed to Vercel. Shareable via URL.</div>
     </div>
     <div class="fplus">+</div>
-    <div class="fn">
-      <div class="fn-badge">#</div>
-      <div class="fn-t">Slack Digest</div>
-      <div class="fn-d">Block Kit. Critical deals surfaced. Links back to live dashboard.</div>
+    <div class="fnode">
+      <div class="fbadge">#</div>
+      <div class="ftitle">Slack Digest</div>
+      <div class="fdesc">Critical deals surfaced. Links back to the live dashboard.</div>
     </div>
-  </div>
-  <div class="cc-note rv d4">
-    <div class="cc-dot"></div>
-    No build pipeline <span class="cc-sep">&middot;</span>
-    No engineering team <span class="cc-sep">&middot;</span>
-    No JIRA tickets <span class="cc-sep">&middot;</span>
-    Built in days
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
+<!-- ══════════════════════════════════════════
      SLIDE 5 · THE NUMBERS
-══════════════════════════════════════════════ -->
-<div class="slide pd" id="s4">
+══════════════════════════════════════════ -->
+<div class="slide nd" id="s4">
   <div class="s5-h rv d1">The pipeline, scored.</div>
   <div class="s5-sub rv d2">Every deal. Every flag. Every dollar. Live.</div>
   <div class="ngrid rv d3">
-    <div class="nc grad">
-      <div class="nv" id="n1">30</div>
-      <div class="nl">Active Deals</div>
+    <div class="nc gd">
+      <div class="nval" id="n1">0</div>
+      <div class="nlabel">Active Deals</div>
     </div>
     <div class="nc">
-      <div class="nv red" id="n2">19</div>
-      <div class="nl">Deals Flagged</div>
+      <div class="nval red" id="n2">0</div>
+      <div class="nlabel">Deals Flagged</div>
     </div>
     <div class="nc">
-      <div class="nv or" id="n3">$2.09M</div>
-      <div class="nl">ARR at Risk</div>
+      <div class="nval or" id="n3">$0M</div>
+      <div class="nlabel">ARR at Risk</div>
     </div>
     <div class="nc">
-      <div class="nv gr" id="n4">74</div>
-      <div class="nl">Avg Health Score</div>
+      <div class="nval gr" id="n4">0</div>
+      <div class="nlabel">Avg Health Score</div>
     </div>
     <div class="nc">
-      <div class="nv pu" id="n5">$1.22M</div>
-      <div class="nl">Weighted Forecast</div>
+      <div class="nval pu" id="n5">$0M</div>
+      <div class="nlabel">Weighted Forecast</div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
+<!-- ══════════════════════════════════════════
      SLIDE 6 · THE CLOSE
-══════════════════════════════════════════════ -->
+══════════════════════════════════════════ -->
 <div class="slide dk" id="s5">
-  <div class="s6-q rv d2">&ldquo;AI didn&rsquo;t replace<br>the sales manager.<br>It gave them a <em>second brain</em><br>that never sleeps.&rdquo;</div>
-  <div class="s6-attr rv d3">Gong Pipeline Intelligence &mdash; GTM Cohort 2026</div>
+  <div class="s6-q rv d2">&ldquo;Pipeline reviews shouldn&rsquo;t start with a spreadsheet.<br>They should start with <em>answers.</em>&rdquo;</div>
+  <div class="s6-attr rv d3">DealPulse &nbsp;&middot;&nbsp; GTM Cohort 2026 &nbsp;&middot;&nbsp; Siddharth Krishna</div>
   <div class="s6-chips rv d4">
     <span class="s6c hl">Claude Code</span>
-    <span class="s6c">MEDDPICC Scoring</span>
-    <span class="s6c">SPRY Email Framework</span>
+    <span class="s6c">MEDDPICC Framework</span>
+    <span class="s6c">Josh Braun Email Framework</span>
     <span class="s6c">Vercel &middot; GitHub &middot; Slack</span>
-    <span class="s6c">gong-pipeline.vercel.app</span>
   </div>
 </div>
 
 <script>
-var TOTAL=6, cur=0, numsDone=false;
-
-// Which slides are light (white bg) — affects chrome colours
+var TOTAL=6,cur=0,numsDone=false;
 var LIGHT=[1,3];
 
 function isLight(n){return LIGHT.indexOf(n)>-1;}
 
-// ── BUILD CHROME ─────────────────────────────
 function buildChrome(){
-  // dots
-  var d=document.getElementById('dots'), h='';
+  var d=document.getElementById('dots'),h='';
   for(var i=0;i<TOTAL;i++)h+='<div class="dot" onclick="goTo('+i+')"></div>';
   d.innerHTML=h;
-  // kbd hint
-  document.getElementById('kbd').innerHTML=
-    '<span class="k" id="ka">&#8592;</span><span class="k" id="kb">&#8594;</span><span id="kl">navigate</span>';
 }
 
-// ── GO TO SLIDE ──────────────────────────────
 function goTo(n){
   var slides=document.querySelectorAll('.slide');
   var dots=document.querySelectorAll('.dot');
   slides[cur].classList.remove('active');
   cur=n;
   slides[cur].classList.add('active');
+  var lt=isLight(cur);
 
-  var light=isLight(cur);
-
-  // dots
   for(var i=0;i<dots.length;i++){
-    dots[i].style.background=i===cur?'#6D28D9':(light?'rgba(0,0,0,.2)':'rgba(255,255,255,.25)');
-    dots[i].style.width=i===cur?'22px':'6px';
+    dots[i].style.background=i===cur?'#6D28D9':(lt?'rgba(0,0,0,.18)':'rgba(255,255,255,.22)');
+    dots[i].className=i===cur?'dot on':'dot';
   }
 
-  // progress
   document.getElementById('progress').style.width=((cur+1)/TOTAL*100)+'%';
 
-  // counter
   var ct=document.getElementById('counter');
   ct.textContent=(cur+1)+' / '+TOTAL;
-  ct.style.color=light?'rgba(0,0,0,.28)':'rgba(255,255,255,.35)';
+  ct.style.color=lt?'rgba(0,0,0,.28)':'rgba(255,255,255,.32)';
 
-  // logo
   var lg=document.getElementById('logo');
-  lg.style.color=light?'#6D28D9':'#9F7AEA';
-  lg.innerHTML='gong<span style="color:'+(light?'rgba(0,0,0,.45)':'rgba(255,255,255,.8)')+'">.</span>';
-
-  // kbd
-  var kbd=document.getElementById('kbd');
-  var kc=light?'rgba(0,0,0,.28)':'rgba(255,255,255,.35)';
-  var kbg=light?'rgba(0,0,0,.07)':'rgba(255,255,255,.12)';
-  var kbr=light?'rgba(0,0,0,.14)':'rgba(255,255,255,.18)';
-  kbd.style.color=kc;
-  var kas=document.querySelectorAll('.k');
-  for(var j=0;j<kas.length;j++){
-    kas[j].style.background=kbg;
-    kas[j].style.border='1px solid '+kbr;
-    kas[j].style.color=kc;
+  if(lt){
+    lg.innerHTML='<span style="color:#111827">deal</span><span style="color:#6D28D9">pulse</span>';
+  } else {
+    lg.innerHTML='<span style="color:#fff">deal</span><span style="color:#C4B5FD">pulse</span>';
   }
 
-  // numbers animation on slide 5
   if(cur===4&&!numsDone){numsDone=true;animNums();}
 }
 
@@ -368,24 +344,23 @@ document.addEventListener('keydown',function(e){
   if(e.key==='ArrowLeft'){e.preventDefault();prev();}
 });
 
-// ── NUMBER ANIMATIONS ────────────────────────
 function animNums(){
   function cu(id,target,ms){
     var el=document.getElementById(id);if(!el)return;
     var s=0,step=target/(ms/16);
-    var t=setInterval(function(){
+    var iv=setInterval(function(){
       s=Math.min(s+step,target);
       el.textContent=Math.round(s);
-      if(s>=target)clearInterval(t);
+      if(s>=target)clearInterval(iv);
     },16);
   }
   function cum(id,target,ms){
     var el=document.getElementById(id);if(!el)return;
     var s=0,step=target/(ms/16);
-    var t=setInterval(function(){
+    var iv=setInterval(function(){
       s=Math.min(s+step,target);
       el.textContent='$'+(s/1e6).toFixed(2)+'M';
-      if(s>=target)clearInterval(t);
+      if(s>=target)clearInterval(iv);
     },16);
   }
   cu('n1',30,900);
@@ -395,7 +370,6 @@ function animNums(){
   cum('n5',1220000,1100);
 }
 
-// ── INIT ─────────────────────────────────────
 buildChrome();
 goTo(0);
 </script>

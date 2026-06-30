@@ -84,7 +84,7 @@ body.dark .logo span{color:#F0F0F5}
 .funnel-row{display:grid;grid-template-columns:110px 1fr 130px;align-items:center;gap:14px;margin-bottom:10px}
 .funnel-label{font-size:12px;font-weight:600;color:#6b7280;text-align:right}
 .funnel-track{background:#f3f4f6;border-radius:6px;height:28px;overflow:hidden}
-.funnel-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#6D28D9,#7C3AED);display:flex;align-items:center;padding-left:10px;min-width:40px}
+.funnel-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#6D28D9,#7C3AED);display:flex;align-items:center;padding-left:10px;min-width:0;transition:width .9s cubic-bezier(.4,0,.2,1)}
 .funnel-fill-text{font-size:11px;font-weight:700;color:#fff;white-space:nowrap}
 .funnel-meta{font-size:12px;color:#9ca3af;font-weight:500}
 
@@ -248,6 +248,9 @@ body.dark .kbd-desc{color:#8888A8}
 body.dark .kbd-key{background:#2A2A38;color:#F0F0F5}
 .kbd-close-btn{margin-top:16px;width:100%;border:none;background:#6D28D9;color:#fff;padding:10px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer}
 .kbd-close-btn:hover{background:#5b21b6}
+/* COACH TIP */
+.coach-tip{font-size:13px;color:#1a1a2e;background:linear-gradient(135deg,rgba(109,40,217,.08),rgba(124,58,237,.03));border-radius:12px;padding:11px 14px;line-height:1.6;border-left:3px solid #6D28D9;margin-top:10px;font-style:italic}
+body.dark .coach-tip{background:rgba(109,40,217,.18);color:#C0C0D5;border-left-color:#7C3AED}
 </style>
 </head>
 <body>
@@ -275,7 +278,7 @@ body.dark .kbd-key{background:#2A2A38;color:#F0F0F5}
       <div class="slbl">Deals Flagged</div>
     </div>
     <div class="card scard">
-      <div class="sval" style="color:#F97316">$2.09M</div>
+      <div class="sval" id="stat-arr" style="color:#F97316">$2.09M</div>
       <div class="slbl">ARR at Risk</div>
     </div>
     <div class="card scard">
@@ -283,7 +286,7 @@ body.dark .kbd-key{background:#2A2A38;color:#F0F0F5}
       <div class="slbl">Avg Health Score</div>
     </div>
     <div class="card scard">
-      <div class="sval" style="color:#6D28D9">$1.22M</div>
+      <div class="sval" id="stat-forecast" style="color:#6D28D9">$1.22M</div>
       <div class="slbl">Weighted Forecast</div>
     </div>
   </div>
@@ -768,11 +771,32 @@ function renderFunnel(){
     var lbl=s.arr>=1e6?'$'+(s.arr/1e6).toFixed(2)+'M':'$'+(s.arr/1000).toFixed(0)+'K';
     h+='<div class="funnel-row">';
     h+='<div class="funnel-label">'+s.name+'</div>';
-    h+='<div class="funnel-track"><div class="funnel-fill" style="width:'+pct+'%"><span class="funnel-fill-text">'+s.deals+' deals</span></div></div>';
+    h+='<div class="funnel-track"><div class="funnel-fill" data-pct="'+pct+'" style="width:0%"><span class="funnel-fill-text">'+s.deals+' deals</span></div></div>';
     h+='<div class="funnel-meta">'+lbl+'</div>';
     h+='</div>';
   }
   document.getElementById('funnel-wrap').innerHTML=h;
+  setTimeout(function(){
+    var fills=document.querySelectorAll('.funnel-fill');
+    for(var i=0;i<fills.length;i++)fills[i].style.width=fills[i].getAttribute('data-pct')+'%';
+  },60);
+}
+
+function getCoachTip(d){
+  var fn=d.champ?(d.champ.split(' ')[0]):'them';
+  if(!d.champ||d.champ.toLowerCase().indexOf('no champion')!==-1)
+    return 'No internal champion means nobody is selling for you internally. The single highest-leverage move right now is identifying one person who feels this pain — without that, no outreach sequence changes the outcome.';
+  if(d.days>=40)
+    return d.days+' days of silence usually signals an internal priority shift. A pattern interrupt — different channel, different contact, or a compelling piece of data — outperforms another follow-up email by a wide margin.';
+  if(d.days>=30)
+    return 'At '+d.days+' days dark, a standard check-in won\'t cut through. Reference the specific cost of inaction tied to '+fn+'\'s documented pain and make it easy to say either yes or no — ambiguity is what keeps deals frozen.';
+  if(d.budget==='No'&&(d.stage==='Proposal'||d.stage==='Demo'))
+    return 'Unconfirmed budget at '+d.stage+' stage is a structural gap. If the economic buyer hasn\'t confirmed spend, the close date is a forecast, not a commitment — this conversation needs to happen before anything else moves forward.';
+  if(d.days>=14)
+    return 'Two weeks of silence is the tipping point where deals drift from active to at-risk in any CRM. A specific, insight-led outreach to '+fn+' this week is dramatically cheaper than a full re-engage in three more weeks.';
+  if(d.health==='wa')
+    return 'Watch-zone deals drift quietly — nothing looks wrong until momentum is gone. Come to the next touch with a new data point or a specific insight tied to their pain. A status check accomplishes nothing.';
+  return 'Momentum is the easiest thing to lose and the hardest to rebuild. Lock the next concrete step into the calendar with '+fn+' before the week closes — a confirmed date is worth more than any email.';
 }
 
 function openModal(id){
@@ -780,6 +804,7 @@ function openModal(id){
   for(var i=0;i<DEALS.length;i++){if(DEALS[i].id===id){d=DEALS[i];break;}}
   if(!d)return;
   modalOpenId=id;
+  window.location.hash=id;
   var ss=getSubScores(d);
   var badge='<span class="act-badge '+hbadge(d.health)+'">'+hlabel(d.health)+'</span>';
   // stage stepper
@@ -807,6 +832,7 @@ function openModal(id){
   h+='<div class="modal-row"><span class="mk">Pain</span><span class="mv">'+esc(d.pain)+'</span></div>';
   h+='<div class="modal-row"><span class="mk">Next Step</span><span class="mv">'+esc(d.nextstep)+'</span></div>';
   if(d.flag)h+='<div class="modal-flag">'+esc(d.flag)+'</div>';
+  h+='<div class="coach-tip">'+getCoachTip(d)+'</div>';
   h+='<hr class="modal-divider">';
   h+='<div class="modal-section-title">Score Breakdown</div>';
   h+='<div class="bar-row"><span class="bar-label">Activity Recency (35%)</span><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(ss.a/35*100)+'%"></div></div><span class="bar-pts">'+ss.a+'/35</span></div>';
@@ -836,6 +862,8 @@ function openModal(id){
 function closeModal(){
   document.getElementById('modal-overlay').classList.remove('open');
   document.body.style.overflow='';
+  modalOpenId=null;
+  history.pushState('',document.title,window.location.pathname+window.location.search);
 }
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){closeModal();closeKbd();return;}
@@ -962,19 +990,36 @@ function toggleDark(){
   renderFunnel();
   renderHead();
   renderTable();
-  // count-up animation on numeric stat cards
-  function countUp(id, target, ms) {
-    var el=document.getElementById(id); if(!el)return;
-    var start=0, step=target/(ms/16);
+  // count-up: integers
+  function countUp(id,target,ms){
+    var el=document.getElementById(id);if(!el)return;
+    var start=0,step=target/(ms/16);
     var t=setInterval(function(){
       start=Math.min(start+step,target);
       el.textContent=Math.round(start);
       if(start>=target)clearInterval(t);
     },16);
   }
-  countUp('stat-deals',   30, 900);
-  countUp('stat-flagged', 19, 900);
-  countUp('stat-score',   74, 900);
+  // count-up: dollar millions
+  function countUpM(id,target,ms){
+    var el=document.getElementById(id);if(!el)return;
+    var start=0,step=target/(ms/16);
+    var t=setInterval(function(){
+      start=Math.min(start+step,target);
+      el.textContent='$'+(start/1e6).toFixed(2)+'M';
+      if(start>=target)clearInterval(t);
+    },16);
+  }
+  countUp('stat-deals',   30,  900);
+  countUp('stat-flagged', 19,  900);
+  countUp('stat-score',   74,  900);
+  countUpM('stat-arr',      2090000, 1100);
+  countUpM('stat-forecast', 1220000, 1100);
+  // deep-link: open modal if URL has a deal hash
+  if(window.location.hash){
+    var hid=window.location.hash.replace('#','');
+    openModal(hid);
+  }
 })();
 </script>
 </body>

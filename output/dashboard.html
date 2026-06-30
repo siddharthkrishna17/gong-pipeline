@@ -292,7 +292,7 @@ tr:hover td{background:#fafbfc}
   </div>
 
   <div class="section">
-    <div class="shead">All Deals</div>
+    <div class="shead">All Deals <span id="deal-count" style="font-size:12px;font-weight:500;color:#9ca3af;margin-left:6px"></span></div>
     <div class="search-wrap">
       <input type="text" id="search-box" placeholder="Search deals, AEs, accounts..." oninput="onSearch(this.value)">
     </div>
@@ -627,6 +627,8 @@ function renderTable(){
   }
   if(!h)h='<tr><td colspan="8" style="text-align:center;padding:40px;color:#9ca3af">No deals match your search.</td></tr>';
   document.getElementById('tbl-body').innerHTML=h;
+  var dc=document.getElementById('deal-count');
+  if(dc)dc.textContent=list.length===DEALS.length?'('+DEALS.length+')':'('+list.length+' of '+DEALS.length+')';
 }
 
 function sortBy(col){
@@ -703,6 +705,7 @@ function closeModal(){
   document.getElementById('modal-overlay').classList.remove('open');
   document.body.style.overflow='';
 }
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
 
 function cpModal(btn){
   var subj=btn.getAttribute('data-subj');

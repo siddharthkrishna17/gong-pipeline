@@ -1,5 +1,4 @@
 # Gong Pipeline Slack Digest
-# Reads SLACK_WEBHOOK_URL from ../.env and flagged_deals.json from ../output/
 # Usage: powershell -ExecutionPolicy Bypass -File send-slack.ps1
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -21,93 +20,129 @@ if (-not $webhookUrl) {
     exit 0
 }
 
-# Load flagged deals
 $jsonPath = Join-Path $projectDir "output\flagged_deals.json"
 if (-not (Test-Path $jsonPath)) {
     Write-Host "flagged_deals.json not found — run pipeline hygiene first." -ForegroundColor Red
     exit 1
 }
 
-$data = Get-Content $jsonPath -Raw -Encoding UTF8 | ConvertFrom-Json
-$summary = $data.summary
-$deals = $data.flagged_deals
-$date = $data.generated_date
+$data    = Get-Content $jsonPath -Raw -Encoding UTF8 | ConvertFrom-Json
+$s       = $data.summary
+$deals   = $data.flagged_deals
+$date    = $data.generated_date
 
-$critical = $deals | Where-Object { $_.health_category -eq "Critical" }
-$warning  = $deals | Where-Object { $_.health_category -eq "Warning" }
-$watch    = $deals | Where-Object { $_.health_category -eq "Watch" }
+$critical = @($deals | Where-Object { $_.health_category -eq "Critical" })
+$warning  = @($deals | Where-Object { $_.health_category -eq "Warning" })
+$watch    = @($deals | Where-Object { $_.health_category -eq "Watch" })
 
-$arrAtRisk = "$" + [math]::Round($summary.arr_at_risk / 1000000, 2) + "M"
+function Fmt-ARR($n) { "$" + [math]::Round($n / 1000) + "K" }
+function Fmt-ARR-M($n) { "$" + [math]::Round($n / 1000000, 2) + "M" }
+function Sum-ARR($list) { ($list | Measure-Object -Property arr -Sum).Sum }
 
-# Build Block Kit payload
-$blocks = @()
-
-# Header
-$blocks += @{
-    type = "header"
-    text = @{ type = "plain_text"; text = "Gong Pipeline Digest — $date"; emoji = $false }
-}
-
-# Summary stats
-$statText = "*$($summary.total_deals)* deals total  |  *$($summary.flagged_count)* flagged  |  *$arrAtRisk* at risk  |  Avg score: *$($summary.avg_health_score)*"
-$blocks += @{
-    type = "section"
-    text = @{ type = "mrkdwn"; text = $statText }
-}
-
-$blocks += @{ type = "divider" }
-
-# Critical deals — one block each
-if ($critical.Count -gt 0) {
-    $blocks += @{
-        type = "section"
-        text = @{ type = "mrkdwn"; text = ":red_circle: *CRITICAL ($($critical.Count) deals)*" }
+# ── TOP BLOCKS ──────────────────────────────────────────────────────────────
+$topBlocks = @(
+    @{
+        type = "header"
+        text = @{ type = "plain_text"; text = "Gong Pipeline Digest  —  $date"; emoji = $false }
+    },
+    @{
+        type   = "section"
+        fields = @(
+            @{ type = "mrkdwn"; text = "*Total Deals*`n$($s.total_deals)" },
+            @{ type = "mrkdwn"; text = "*Flagged*`n$($s.flagged_count)" },
+            @{ type = "mrkdwn"; text = "*ARR at Risk*`n$(Fmt-ARR-M $s.arr_at_risk)" },
+            @{ type = "mrkdwn"; text = "*Avg Health Score*`n$($s.avg_health_score) / 100" }
+        )
     }
+)
 
-    foreach ($d in $critical) {
-        $daysText = if ($d.days_since_activity -eq 1) { "1 day" } else { "$($d.days_since_activity) days" }
-        $arrK = "$" + [math]::Round($d.arr / 1000) + "K"
-        $flagText = if ($d.flags -and $d.flags.Count -gt 0) { $d.flags[0] } else { "No recent activity" }
-        $text = "*$($d.deal_name)*  |  $($d.ae_name)  |  $arrK  |  $daysText dark`n>$flagText"
-        $blocks += @{
-            type = "section"
-            text = @{ type = "mrkdwn"; text = $text }
+# ── CRITICAL ATTACHMENT ──────────────────────────────────────────────────────
+$critBlocks = @(
+    @{
+        type = "section"
+        text = @{ type = "mrkdwn"; text = "*:red_circle: CRITICAL — $($critical.Count) deals  ·  $(Fmt-ARR (Sum-ARR $critical)) at risk*" }
+    },
+    @{ type = "divider" }
+)
+
+foreach ($d in $critical) {
+    $days = if ($d.days_since_activity -eq 1) { "1 day dark" } else { "$($d.days_since_activity) days dark" }
+    $flag = if ($d.flags -and $d.flags.Count -gt 0) { $d.flags[0] } else { "" }
+    $critBlocks += @{
+        type   = "section"
+        fields = @(
+            @{ type = "mrkdwn"; text = "*$($d.deal_name)*`n$($d.ae_name)  ·  $($d.stage)" },
+            @{ type = "mrkdwn"; text = "*$(Fmt-ARR $d.arr)*`n$days" }
+        )
+    }
+    if ($flag) {
+        $critBlocks += @{
+            type     = "context"
+            elements = @(@{ type = "mrkdwn"; text = ":small_red_triangle: $flag" })
         }
     }
-
-    $blocks += @{ type = "divider" }
 }
 
-# Warning rollup
-if ($warning.Count -gt 0) {
-    $names = ($warning | ForEach-Object { $_.deal_name }) -join ", "
-    $blocks += @{
+$critAttachment = @{
+    color  = "#EF4444"
+    blocks = $critBlocks
+}
+
+# ── WARNING ATTACHMENT ───────────────────────────────────────────────────────
+$warnLines = $warning | ForEach-Object { "$($_.deal_name) ($(Fmt-ARR $_.arr))" }
+$warnBlocks = @(
+    @{
         type = "section"
-        text = @{ type = "mrkdwn"; text = ":large_orange_circle: *WARNING ($($warning.Count) deals)*`n$names" }
-    }
-}
-
-# Watch rollup
-if ($watch.Count -gt 0) {
-    $names = ($watch | ForEach-Object { $_.deal_name }) -join ", "
-    $blocks += @{
+        text = @{ type = "mrkdwn"; text = "*:large_orange_circle: WARNING — $($warning.Count) deals  ·  $(Fmt-ARR (Sum-ARR $warning)) at risk*" }
+    },
+    @{
         type = "section"
-        text = @{ type = "mrkdwn"; text = ":large_yellow_circle: *WATCH ($($watch.Count) deals)*`n$names" }
+        text = @{ type = "mrkdwn"; text = ($warnLines -join "  ·  ") }
     }
+)
+
+$warnAttachment = @{
+    color  = "#F97316"
+    blocks = $warnBlocks
 }
 
-$blocks += @{ type = "divider" }
+# ── WATCH ATTACHMENT ─────────────────────────────────────────────────────────
+$watchLines = $watch | ForEach-Object { "$($_.deal_name) ($(Fmt-ARR $_.arr))" }
+$watchBlocks = @(
+    @{
+        type = "section"
+        text = @{ type = "mrkdwn"; text = "*:large_yellow_circle: WATCH — $($watch.Count) deals  ·  $(Fmt-ARR (Sum-ARR $watch)) at risk*" }
+    },
+    @{
+        type = "section"
+        text = @{ type = "mrkdwn"; text = ($watchLines -join "  ·  ") }
+    }
+)
 
-# Dashboard link
-$blocks += @{
-    type = "section"
-    text = @{ type = "mrkdwn"; text = "<https://gong-pipeline.vercel.app|View full dashboard :arrow_upper_right:>" }
+$watchAttachment = @{
+    color  = "#EAB308"
+    blocks = $watchBlocks
 }
 
-$payload = @{ blocks = $blocks } | ConvertTo-Json -Depth 10 -Compress
+# ── FOOTER ATTACHMENT ────────────────────────────────────────────────────────
+$footerAttachment = @{
+    color  = "#6D28D9"
+    blocks = @(
+        @{
+            type = "section"
+            text = @{ type = "mrkdwn"; text = "<https://gong-pipeline.vercel.app|:bar_chart:  Open full dashboard>" }
+        }
+    )
+}
+
+# ── SEND ─────────────────────────────────────────────────────────────────────
+$payload = @{
+    blocks      = $topBlocks
+    attachments = @($critAttachment, $warnAttachment, $watchAttachment, $footerAttachment)
+} | ConvertTo-Json -Depth 12 -Compress
 
 try {
-    $response = Invoke-RestMethod -Uri $webhookUrl -Method Post -Body $payload -ContentType "application/json"
+    Invoke-RestMethod -Uri $webhookUrl -Method Post -Body $payload -ContentType "application/json" | Out-Null
     Write-Host "Slack digest sent successfully." -ForegroundColor Green
 } catch {
     Write-Host "Failed to send Slack digest: $_" -ForegroundColor Red

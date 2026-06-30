@@ -152,6 +152,12 @@ tr:hover td{background:#fafbfc}
 .dc-copy:hover{background:#5b21b6}
 .dc-copy.copied{background:#22C55E}
 .no-deals{text-align:center;padding:60px 20px;color:#9ca3af;font-size:14px;grid-column:1/-1}
+.ae-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;margin-bottom:10px;flex-shrink:0}
+.dc-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0}
+td:last-child{position:relative}
+td:last-child::after{content:'Open \2192';position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:#6D28D9;opacity:0;transition:opacity .15s;pointer-events:none;white-space:nowrap}
+tr:hover td:last-child::after{opacity:1}
+body.dark td:last-child::after{color:#9F7AEA}
 
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:flex-end;justify-content:center}
@@ -197,11 +203,11 @@ tr:hover td{background:#fafbfc}
 
   <div class="stat-row">
     <div class="card scard">
-      <div class="sval">30</div>
+      <div class="sval" id="stat-deals">30</div>
       <div class="slbl">Active Deals</div>
     </div>
     <div class="card scard">
-      <div class="sval" style="color:#EF4444">19</div>
+      <div class="sval" id="stat-flagged" style="color:#EF4444">19</div>
       <div class="slbl">Deals Flagged</div>
     </div>
     <div class="card scard">
@@ -209,7 +215,7 @@ tr:hover td{background:#fafbfc}
       <div class="slbl">ARR at Risk</div>
     </div>
     <div class="card scard">
-      <div class="sval">74</div>
+      <div class="sval" id="stat-score">74</div>
       <div class="slbl">Avg Health Score</div>
     </div>
     <div class="card scard">
@@ -222,6 +228,7 @@ tr:hover td{background:#fafbfc}
     <div class="shead">AE Leaderboard</div>
     <div class="ae-row">
       <div class="card ae-card clickable" data-ae="Priya Nair" onclick="switchAE(this.getAttribute('data-ae'))">
+        <div class="ae-avatar" style="background:#7C3AED">PN</div>
         <div class="ae-name">Priya Nair</div>
         <div class="ae-stat"><span class="k">Deals</span><span class="v">7</span></div>
         <div class="ae-stat"><span class="k">Flagged</span><span class="v" style="color:#F97316">3</span></div>
@@ -230,6 +237,7 @@ tr:hover td{background:#fafbfc}
         <div class="ae-bar"><div class="ae-fill" style="width:89%"></div></div>
       </div>
       <div class="card ae-card clickable" data-ae="Sarah Chen" onclick="switchAE(this.getAttribute('data-ae'))">
+        <div class="ae-avatar" style="background:#2563EB">SC</div>
         <div class="ae-name">Sarah Chen</div>
         <div class="ae-stat"><span class="k">Deals</span><span class="v">8</span></div>
         <div class="ae-stat"><span class="k">Flagged</span><span class="v" style="color:#F97316">5</span></div>
@@ -238,6 +246,7 @@ tr:hover td{background:#fafbfc}
         <div class="ae-bar"><div class="ae-fill" style="width:73%"></div></div>
       </div>
       <div class="card ae-card clickable" data-ae="Marcus Webb" onclick="switchAE(this.getAttribute('data-ae'))">
+        <div class="ae-avatar" style="background:#059669">MW</div>
         <div class="ae-name">Marcus Webb</div>
         <div class="ae-stat"><span class="k">Deals</span><span class="v">8</span></div>
         <div class="ae-stat"><span class="k">Flagged</span><span class="v" style="color:#F97316">5</span></div>
@@ -246,6 +255,7 @@ tr:hover td{background:#fafbfc}
         <div class="ae-bar"><div class="ae-fill" style="width:70%"></div></div>
       </div>
       <div class="card ae-card clickable" data-ae="James O'Brien" onclick="switchAE(this.getAttribute('data-ae'))">
+        <div class="ae-avatar" style="background:#D97706">JO</div>
         <div class="ae-name">James O'Brien</div>
         <div class="ae-stat"><span class="k">Deals</span><span class="v">7</span></div>
         <div class="ae-stat"><span class="k">Flagged</span><span class="v" style="color:#EF4444">6</span></div>
@@ -544,6 +554,9 @@ var DEALS = [
  ebody:"Michael - two notes in May with no response, so I'll make this the last one.\n\nEight reps managing pipeline in spreadsheets with zero call visibility is a real risk heading into Q3. If the timing is genuinely off, no hard feelings — just let me know and I'll close this out."}
 ];
 
+var AE_COLORS = {'Priya Nair':'#7C3AED','Sarah Chen':'#2563EB','Marcus Webb':'#059669',"James O'Brien":'#D97706'};
+function initials(n){return n.split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase();}
+
 var sortState = {col:'arr', dir:'desc'};
 var searchQuery = '';
 var activeAE = 'all';
@@ -753,7 +766,8 @@ function buildCard(d){
   var sj=(d.esubj||'').replace(/"/g,'&quot;');
   var h='';
   h+='<div class="dc" data-ae="'+esc(d.ae)+'">';
-  h+='<div class="dc-head"><div class="dc-deal">'+esc(d.deal)+' <span class="act-badge '+hbadge(d.health)+'">'+hlabel(d.health)+'</span></div>';
+  var avc=AE_COLORS[d.ae]||'#6D28D9';
+  h+='<div class="dc-head"><div class="dc-avatar" style="background:'+avc+'">'+initials(d.ae)+'</div><div class="dc-deal" style="margin-left:8px">'+esc(d.deal)+' <span class="act-badge '+hbadge(d.health)+'">'+hlabel(d.health)+'</span></div>';
   h+='<div class="dc-score '+sc+'">'+d.score+'</div></div>';
   h+='<div class="dc-body">';
   h+='<div class="dc-row"><span class="dk">AE</span><span class="dv">'+esc(d.ae)+'</span></div>';
@@ -815,6 +829,19 @@ function toggleDark(){
   renderFunnel();
   renderHead();
   renderTable();
+  // count-up animation on numeric stat cards
+  function countUp(id, target, ms) {
+    var el=document.getElementById(id); if(!el)return;
+    var start=0, step=target/(ms/16);
+    var t=setInterval(function(){
+      start=Math.min(start+step,target);
+      el.textContent=Math.round(start);
+      if(start>=target)clearInterval(t);
+    },16);
+  }
+  countUp('stat-deals',   30, 900);
+  countUp('stat-flagged', 19, 900);
+  countUp('stat-score',   74, 900);
 })();
 </script>
 </body>

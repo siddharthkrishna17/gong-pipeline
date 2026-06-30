@@ -60,7 +60,7 @@ $topBlocks = @(
 $critBlocks = @(
     @{
         type = "section"
-        text = @{ type = "mrkdwn"; text = "*:red_circle: CRITICAL — $($critical.Count) deals  ·  $(Fmt-ARR (Sum-ARR $critical)) at risk*" }
+        text = @{ type = "mrkdwn"; text = "*:red_circle: CRITICAL - $($critical.Count) deals - $(Fmt-ARR (Sum-ARR $critical)) at risk*" }
     },
     @{ type = "divider" }
 )
@@ -71,14 +71,14 @@ foreach ($d in $critical) {
     $critBlocks += @{
         type   = "section"
         fields = @(
-            @{ type = "mrkdwn"; text = "*$($d.deal_name)*`n$($d.ae_name)  ·  $($d.stage)" },
+            @{ type = "mrkdwn"; text = "*$($d.deal_name)*`n$($d.ae_name) | $($d.stage)" },
             @{ type = "mrkdwn"; text = "*$(Fmt-ARR $d.arr)*`n$days" }
         )
     }
     if ($flag) {
         $critBlocks += @{
             type     = "context"
-            elements = @(@{ type = "mrkdwn"; text = ":small_red_triangle: $flag" })
+            elements = @(@{ type = "mrkdwn"; text = "_$flag_" })
         }
     }
 }
@@ -89,15 +89,15 @@ $critAttachment = @{
 }
 
 # ── WARNING ATTACHMENT ───────────────────────────────────────────────────────
-$warnLines = $warning | ForEach-Object { "$($_.deal_name) ($(Fmt-ARR $_.arr))" }
+$warnLines = ($warning | ForEach-Object { "- *$($_.deal_name)* ($(Fmt-ARR $_.arr)) - $($_.ae_name)" }) -join "`n"
 $warnBlocks = @(
     @{
         type = "section"
-        text = @{ type = "mrkdwn"; text = "*:large_orange_circle: WARNING — $($warning.Count) deals  ·  $(Fmt-ARR (Sum-ARR $warning)) at risk*" }
+        text = @{ type = "mrkdwn"; text = "*:large_orange_circle: WARNING - $($warning.Count) deals - $(Fmt-ARR (Sum-ARR $warning)) at risk*" }
     },
     @{
         type = "section"
-        text = @{ type = "mrkdwn"; text = ($warnLines -join "  ·  ") }
+        text = @{ type = "mrkdwn"; text = $warnLines }
     }
 )
 
@@ -107,15 +107,15 @@ $warnAttachment = @{
 }
 
 # ── WATCH ATTACHMENT ─────────────────────────────────────────────────────────
-$watchLines = $watch | ForEach-Object { "$($_.deal_name) ($(Fmt-ARR $_.arr))" }
+$watchLines = ($watch | ForEach-Object { "- *$($_.deal_name)* ($(Fmt-ARR $_.arr)) - $($_.ae_name)" }) -join "`n"
 $watchBlocks = @(
     @{
         type = "section"
-        text = @{ type = "mrkdwn"; text = "*:large_yellow_circle: WATCH — $($watch.Count) deals  ·  $(Fmt-ARR (Sum-ARR $watch)) at risk*" }
+        text = @{ type = "mrkdwn"; text = "*:large_yellow_circle: WATCH - $($watch.Count) deals - $(Fmt-ARR (Sum-ARR $watch)) at risk*" }
     },
     @{
         type = "section"
-        text = @{ type = "mrkdwn"; text = ($watchLines -join "  ·  ") }
+        text = @{ type = "mrkdwn"; text = $watchLines }
     }
 )
 

@@ -208,8 +208,81 @@ Uses data-ae HTML attribute to avoid JS apostrophe escaping:
 
 ### Vercel Deployment
 - vercel.json at project root sets outputDirectory:"output" and rewrites / → /dashboard.html
-- To deploy: run these two commands from `D:\Deal quality and Pipeline hygiene\`
-    npm i -g vercel      (first time only)
-    vercel login         (first time only — opens browser for auth)
-    vercel --prod        (deploys; run this every time after updates)
+- Scope: siddharthkrishna17-5772s-projects
+- Live URL: https://gong-pipeline.vercel.app
+- GitHub: https://github.com/siddharthkrishna17/gong-pipeline
+- To redeploy after updates:
+    cd "D:\Deal quality and Pipeline hygiene"
+    git add . && git commit -m "message" && git push
+    vercel --prod --scope siddharthkrishna17-5772s-projects
 - No build step. Vercel serves output/dashboard.html as a static site.
+
+---
+
+## V3 Plan (fully confirmed 2026-06-30, NOT YET BUILT)
+
+All decisions confirmed by user. Build as a single full rewrite of dashboard.html.
+
+### Confirmed Feature List
+
+1. **Dark mode** — system preference default (`prefers-color-scheme`), sun/moon toggle in header, persisted in localStorage
+2. **Slide-up modal** — click any deal row, Act Today card, or AE leaderboard card → slide-up modal. Close via X or backdrop click.
+3. **Score breakdown bars** — inside modal: 4 horizontal bars (Activity 35%, MEDDPICC 30%, Stage-Close 20%, Velocity 15%) with X/max labels
+4. **Sortable table columns** — click any header to sort asc/desc, arrow indicators shown
+5. **Clickable AE leaderboard cards** — click card → switches to AE view filtered to that rep
+6. **Clickable Act Today cards** — opens slide-up modal for that deal
+7. **Search/filter bar** — live search on manager deal table only (by deal name, AE, account)
+8. **Pipeline forecast stat** — 5th summary card: weighted ARR by stage win probability
+9. **Pipeline funnel chart** — horizontal bars between AE leaderboard and Act Today section
+
+### Modal Design (confirmed 2026-06-30)
+Clean sections with dividers:
+- Header: deal name, health badge, AE name, ARR
+- Section "DEAL CONTEXT": Champion, Econ Buyer, Budget, Pain, Next Step, flag reason
+- Section "SCORE BREAKDOWN": 4 bars with X/max labels, total score shown
+- Section "SUGGESTED EMAIL": subject (purple), body, Copy Email button
+- Full-width dividers between each section
+
+### Funnel Chart (confirmed 2026-06-30)
+- Position: between AE leaderboard and Act Today
+- Horizontal bars per stage, Gong purple gradient fill
+- Each bar labelled with deal count + ARR total for that stage
+
+### Dark Mode (confirmed 2026-06-30)
+Full contrast dark — NOT soft grey:
+- Background: #0F0F13
+- Card background: #1A1A24
+- Card border: #2A2A38
+- Text primary: #F0F0F5
+- Text muted: #8888A8
+- Purple accent: #6D28D9 (unchanged)
+- Health colors: unchanged
+- Implementation: `body.dark` class toggle, all dark styles scoped to `body.dark`
+
+### Search Scope (confirmed 2026-06-30)
+Manager table only. AE view is unaffected by the search bar.
+
+### Stage Win Probabilities (for forecast stat)
+- Prospecting: 10%
+- Discovery: 20%
+- Demo: 35%
+- Proposal: 55%
+- Negotiation: 80%
+
+### Data Note for V3
+- `deals.json` on D: only has D001–D020 (20 deals)
+- D021–D030 live only in the JS `DEALS` array inside dashboard.html
+- V3 must have all 30 deals in the JS array so modals work for every table row
+- Healthy deals not currently in DEALS array — add with: id, deal, ae, stage, arr, days, score, health, champ, eb, budget, pain, nextstep, flag (empty string for healthy deals)
+
+### Build Notes
+- Single full rewrite pass (~25–30K tokens)
+- No nested template literals — use string concatenation in buildCard()
+- sv() must use `element.style.display = 'block'` not `''`
+- Modal: slide-up overlay with backdrop, closeable via X or backdrop click
+- No external dependencies — fully self-contained HTML
+
+### Continuation Prompt
+Paste into a new session to resume:
+
+> Read CLAUDE.md first (C:\Users\Aditya PC\Documents\Deal quality and Pipeline hygiene\CLAUDE.md). Then read D:\Deal quality and Pipeline hygiene\output\dashboard.html in full. C: drive is full — all output goes to D:. Build v3 exactly as specified in the "V3 Plan" section of CLAUDE.md in a single rewrite pass. Output to D:\Deal quality and Pipeline hygiene\output\dashboard.html.
